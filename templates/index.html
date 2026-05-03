@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Section</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link href="https://fonts.cdnfonts.com/css/graffiti-ptx" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="../assets/logo.png" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/logo.png" />
+  </head>
+  <body>
+    <!-- Header / Navigation -->
+    <header>
+      <div class="logo">
+        <img src="../assets/placeholder-circle.png" alt="" />
+        <span>Section</span>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#" class="active">Products</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Search Bar -->
+        <div class="search-bar">
+          <input type="text" placeholder="Search..." />
+          <i class="fas fa-search"></i>
+        </div>
+
+        <!-- Cart Icon -->
+        <div class="cart-icon">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-count">0</span>
+        </div>
+        <!-- Login / Register Icon -->
+        <div class="login-btn">
+          <a href="../login/login.html"><i class="fa-solid fa-user"></i></a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div
+        style="display: flex; justify-content: flex-end; padding: 16px 24px 0"
+      >
+        <button class="add-btn" onclick="openAddModal()">+ Add Products</button>
+      </div>
+      <div class="products" id="product-grid"></div>
+
+      <!-- <div class="card">
+          <div class="image">
+            <span class="text"><img src="" alt="" /></span>
+          </div>
+          <span class="title">Cool Chair</span>
+          <span class="price">$100</span>
+        </div> -->
+    </main>
+
+    <div id="add-modal" class="modal-overlay hidden">
+      <div class="modal-box">
+        <button class="modal-close" onclick="closeAddModal()">X</button>
+        <h2>Add Product</h2>
+
+        <label>Name</label>
+        <input type="text" id="new-name" placeholder="e.g. Cool Chair" />
+
+        <label>Price ($)</label>
+        <input
+          type="text"
+          id="new-price"
+          placeholder="e.g. 99.99"
+          min="0"
+          step="0.01"
+        />
+        <label>Image URL</label>
+        <input type="text" id="new-image" placeholder="https://..." />
+
+        <p
+          id="add-error"
+          style="color: red; font-size: 13px; display: none"
+        ></p>
+
+        <button class="submit-btn" onclick="submitProduct()">
+          Add Product
+        </button>
+      </div>
+    </div>
+    <footer></footer>
+
+    <script src="../static/script.js"></script>
+  </body>
+</html>
