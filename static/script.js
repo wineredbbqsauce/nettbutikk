@@ -35,6 +35,8 @@ function renderProducts(productsToRender) {
 */
 const API = "/api/products";
 
+let removeMode = false;
+
 async function loadProducts() {
   const res = await fetch(API);
   const products = await res.json();
@@ -49,19 +51,75 @@ async function loadProducts() {
   grid.innerHTML = products
     .map(
       (p) => `
-    <div class="card">
-      <div class="image">
-        <img src="${p.image_url || ""}"
-          alt="${p.name}"
-          onerror="this.style.display='none'">
-      </div>
-      <span class="title">${p.name}</span>
-      <span class="price">$${parseFloat(p.price).toFixed(2)}</span>
+      <div class="card" id="card-${p.id}">
+        <div class="image">
+          <img src="${p.image_url || ""}" alt="${p.name}" onerror="this.style.display='none'">
+          <div class="overlay">
+            <button class="overlay-btn" onclick="addToCart(event, this, ${p.id})">Add to Cart</button>
+          </div>
+          <button class="delete-btn" onclick="deleteProduct(event, ${p.id})">🗑</button>
+        </div>
+        <div class="info">
+          <span class="title">${p.name}</span>
+          <span class="price">$${parseFloat(p.price).toFixed(2)}</span>
+        </div>
       </div>
     `,
     )
     .join("");
 }
+
+function toggleRemoveMode() {
+  removeMode = !removeMode;
+  const btn = document.getElementById("remove-toggle");
+
+  if (removeMode) {
+    btn.textContent = "✕";
+    btn.classList.add("active");
+  } else {
+    btn.textContent = "🗑 Remove";
+    btn.classList.remove("active");
+  }
+
+  // toggle remove modes class on all cards without re-fetching
+  document.querySelectorAll(".card").forEach((card) => {
+    card.classList.toggle("remove-mode", removeMode);
+    const overlay = card.querySelector(".overlay");
+    if (overlay) overlay.style.display = removeMode ? "none" : "";
+  });
+}
+
+async function deleteProduct(event, id) {
+  event.stopPropagation();
+
+  const res = await fetch(`${API}/${id}`, { method: "DELETE" });
+  if (res.ok) {
+    // remove card from DOM instantly without full reload
+    const card = document.getElementById(`card-${id}`);
+    if (card) card.remove();
+  } else {
+    alert("Failed t odelete product.");
+  }
+}
+
+function addToCart(event, btn, id) {
+  event.stopPropagation(); // dont trigger card click
+  btn.textContent = "Added!";
+  btn.classList.add("added");
+  setTimeout(() => {
+    btn.textContent = "Add To Cart";
+    btn.classList.remove("added");
+  }, 1400);
+}
+
+// Show preview when file is selected
+document.getElementById("new-image").addEventListener("change", function () {
+  const file = this.files[0];
+  if (!file) return;
+  const preview = document.getElementById("image-preview");
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+});
 
 // Add moron- no. i mean modal
 
@@ -79,8 +137,8 @@ function closeAddModal() {
 
 async function submitProduct() {
   const name = document.getElementById("new-name").value.trim();
-  const price = document.getElementById("new-price").value;
-  const image_url = document.getElementById("new-image").value.trim();
+  const price = document.getElementById("new-price").value.trim();
+  const image = document.getElementById("new-image").files[0];
   const errEl = document.getElementById("add-error");
 
   if (!name || !price) {
@@ -89,17 +147,29 @@ async function submitProduct() {
     return;
   }
 
+  if (isNaN(price) || parseFloat(price) <= 0) {
+    errEl.textContent = "Price must be a valid positive number!";
+    errEl.style.display = "block";
+    return;
+  }
+
+  // Bruker FormData og ikke JSON - trengs for file opplastinger
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("price", price);
+  if (image) formData.append("image", image);
+
   const res = await fetch(API, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, price: parseFloat(price), image_url }),
+    body: formData,
   });
+
+  const data = await res.json();
 
   if (res.ok) {
     closeAddModal();
     loadProducts(); // refresh u moron bastartd
   } else {
-    const data = await res.json();
     errEl.textContent = data.error || "Something went wrong dipshit";
     errEl.style.display = "block";
   }
