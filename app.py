@@ -48,11 +48,15 @@ def init_db():
                 "INSERT INTO products VALUES (?,?,?,?,?)",
                 [
                     (None, "Blue Sneakers", 49.99,
-                     "https://example.com/shoe.jpg",
+                     "https://luksusbaby.no/cdn/shop/products/gsb480wh_2.jpg?v=1710449321&width=1214",
                      "Comfortable everyday shoes!"),
-                     (None,"Leather Bag",89.99,
-                     "https://example.com/bag.jpg",
-                     "Genuine leather tote bag"),
+                    (None,"Leather Bag",89.99,
+                      "https://xcdn.next.co.uk/common/items/default/default/itemimages/3_4Ratio/product/lge/F02718s.jpg?im=Resize,width=750",
+                    "Genuine leather tote bag"),
+                    (None, "Placeholder", -10,
+                     "/static/assets/placeholder.png",
+                     "Let me - bitch"
+                    ),
                 ]
             )
         conn.commit()

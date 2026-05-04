@@ -44,7 +44,7 @@ async function loadProducts() {
   const grid = document.getElementById("product-grid");
 
   if (products.length === 0) {
-    grid.innerHTML = "<p style='padding:24px;'>No Products yet, moron.</p>";
+    grid.innerHTML = "<p style='padding:24px;'>No Products yet.</p>";
     return;
   }
 
@@ -52,14 +52,14 @@ async function loadProducts() {
     .map(
       (p) => `
       <div class="card" id="card-${p.id}">
-        <div class="image">
+        <div class="image" onclick="openProductModal(${p.id})">
           <img src="${p.image_url || ""}" alt="${p.name}" onerror="this.style.display='none'">
           <div class="overlay">
             <button class="overlay-btn" onclick="addToCart(event, this, ${p.id})">Add to Cart</button>
           </div>
           <button class="delete-btn" onclick="deleteProduct(event, ${p.id})">🗑</button>
         </div>
-        <div class="info">
+        <div class="info" onclick="openProductModal(${p.id})">
           <span class="title">${p.name}</span>
           <span class="price">$${parseFloat(p.price).toFixed(2)}</span>
         </div>
@@ -68,6 +68,64 @@ async function loadProducts() {
     )
     .join("");
 }
+
+let currentProduct = null;
+
+async function openProductModal(productId) {
+  currentProduct = productId;
+
+  try {
+    const res = await fetch(`${API}/${productId}`);
+    const product = await res.json();
+
+    if (!res.ok) {
+      console.error("Failed to fetch product");
+      return;
+    }
+
+    // Populate modal
+    document.getElementById("modal-title").textContent = product.name;
+    document.getElementById("modal-price").textContent = parseFloat(
+      product.price,
+    ).toFixed(2);
+    document.getElementById("modal-description").textContent =
+      product.description || "No Description Available";
+    document.getElementById("modal-image").src = product.image_url || "";
+    document.getElementById("modal-image").onerror = function () {
+      this.style.display = "none";
+    };
+
+    // show modal - obv
+    document.getElementById("product-modal").classList.remove("hidden");
+  } catch (error) {
+    console.error("Error opening product modal:", error);
+  }
+}
+
+function closeProductModal() {
+  document.getElementById("product-modal").classList.add("hidden");
+  currentProduct = null;
+}
+
+function addToCartFromModal() {
+  const btn = event.target;
+  btn.textContent = "Added!";
+  btn.style.background = "#28a745";
+
+  setTimeout(() => {
+    btn.textContent = "Add to Cart";
+    btn.style.background = "#222";
+    closeProductModal();
+  }, 1400);
+}
+
+// Close modal when clicking out - would be a nice touch
+document.addEventListener("click", function (event) {
+  const modal = document.getElementById("product-modal");
+  if (event.target === modal) {
+    closeProductModal();
+  }
+});
 
 function toggleRemoveMode() {
   removeMode = !removeMode;

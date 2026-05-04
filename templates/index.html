@@ -33,7 +33,7 @@
 
       <nav>
         <ul>
-          <li><a href="#">Home</a></li>
+          <li><a href="/">Home</a></li>
           <li><a href="#" class="active">Products</a></li>
           <li><a href="#">About Us</a></li>
           <li><a href="#">Contact Us</a></li>
@@ -125,6 +125,35 @@
         </button>
       </div>
     </div>
+
+    <div id="product-modal" class="modal-overlay hidden">
+      <div class="modal-box product-detail">
+        <button class="modal-close" onclick="closeProductModal()">X</button>
+
+        <div class="product-modal-content">
+          <img id="modal-image" src="" alt="" class="modal-image" />
+
+          <div class="product-info">
+            <h2 id="modal-title"></h2>
+            <p id="modal-description"></p>
+
+            <div class="price-section">
+              <span class="modal-price">$<span id="modal-price"></span></span>
+            </div>
+
+            <button class="add-to-cart-btn" onclick="addToCartFromModal()">
+              Add To Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="quantity-selector">
+      <button onclick="decreaseQty()">-</button>
+      <input type="number" id="qty" value="1" min="1" />
+      <button onclick="increaseQty()">+</button>
+    </div> -->
     <footer></footer>
 
     <script src="/static/script.js"></script>
