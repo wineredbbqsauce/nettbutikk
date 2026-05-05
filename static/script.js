@@ -44,7 +44,7 @@ async function loadProducts() {
   const grid = document.getElementById("product-grid");
 
   if (products.length === 0) {
-    grid.innerHTML = "<p style='padding:24px;'>No Products yet.</p>";
+    grid.innerHTML = "<p style='padding:24px;'>No Products yet, moron.</p>";
     return;
   }
 
@@ -57,7 +57,7 @@ async function loadProducts() {
           <div class="overlay">
             <button class="overlay-btn" onclick="addToCart(event, this, ${p.id})">Add to Cart</button>
           </div>
-          <button class="delete-btn" onclick="deleteProduct(event, ${p.id})">🗑</button>
+          <button class="delete-btn" onclick="deleteProduct(event, ${p.id})" style="pointer-events: ${removeMode ? "auto" : "none"}; opacity: ${removeMode ? "1" : "0"}";>🗑</button>
         </div>
         <div class="info" onclick="openProductModal(${p.id})">
           <span class="title">${p.name}</span>
@@ -144,6 +144,11 @@ function toggleRemoveMode() {
     card.classList.toggle("remove-mode", removeMode);
     const overlay = card.querySelector(".overlay");
     if (overlay) overlay.style.display = removeMode ? "none" : "";
+
+    const deleteBtn = card.querySelector(".delete-btn");
+    if (deleteBtn) {
+      deleteBtn.style.pointerEvents = removeMode ? "auto" : "none";
+    }
   });
 }
 
@@ -189,8 +194,14 @@ function closeAddModal() {
   document.getElementById("add-modal").classList.add("hidden");
   document.getElementById("new-name").value = "";
   document.getElementById("new-price").value = "";
+  document.getElementById("new-description").value = "";
   document.getElementById("new-image").value = "";
   document.getElementById("add-error").style.display = "none";
+
+  // reset image preview
+  const imagePreview = document.getElementById("image-preview");
+  imagePreview.src = "";
+  imagePreview.style.display = "none";
 }
 
 async function submitProduct() {
@@ -198,6 +209,7 @@ async function submitProduct() {
   const price = document.getElementById("new-price").value.trim();
   const image = document.getElementById("new-image").files[0];
   const errEl = document.getElementById("add-error");
+  const description = document.getElementById("new-description").value.trim();
 
   if (!name || !price) {
     errEl.textContent = "Name and Price are required!";
@@ -215,6 +227,7 @@ async function submitProduct() {
   const formData = new FormData();
   formData.append("name", name);
   formData.append("price", price);
+  formData.append("description", description);
   if (image) formData.append("image", image);
 
   const res = await fetch(API, {
@@ -232,5 +245,28 @@ async function submitProduct() {
     errEl.style.display = "block";
   }
 }
+
+// Close add modal when clicking outside
+document
+  .getElementById("add-modal")
+  .addEventListener("click", function (event) {
+    if (event.target === this) {
+      closeAddModal();
+    }
+  });
+
+// close ad modal when pressing ESC
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
+    const addModal = document.getElementById("add-modal");
+    const productModal = document.getElementById("product-modal");
+
+    if (!addModal.classList.contains("hidden")) {
+      closeAddModal();
+    } else if (!productModal.classList.contains("hidden")) {
+      closeProductModal();
+    }
+  }
+});
 
 loadProducts();

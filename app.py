@@ -97,6 +97,7 @@ def delete_product(product_id):
 def add_product():
     name = request.form.get("name", "").strip()
     price = request.form.get("price")
+    description = request.form.get("description", "").strip()
     image = request.files.get("image")
 
     # if not name or price is None:
@@ -136,7 +137,7 @@ def add_product():
         db = get_db()
         db.execute(
             "INSERT INTO products (name, price, image_url, description) VALUES (?,?,?,?)",
-            (name, float(price), image_url, "")
+            (name, float(price), image_url, description)
         )
         db.commit()
         return jsonify({"success": True }), 201

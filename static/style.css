@@ -558,6 +558,7 @@ nav a.active::after {
 
 .card.remove-mode .delete-btn {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .delete-btn:hover {
