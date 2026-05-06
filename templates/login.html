@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
-    <link rel="stylesheet" href="../static/login.css" />
+    <link rel="stylesheet" href="/static/css/login.css" />
   </head>
   <body>
     <main class="container">
@@ -12,9 +12,16 @@
         <h1>Welcome Back</h1>
         <p>Please log in to your account</p>
 
-        <form>
-          <input type="email" placeholder="Email address" required />
-          <input type="password" placeholder="Password" required />
+        <div id="error-msg" style="color: red; display: none"></div>
+
+        <form id="login-form">
+          <input id="username" type="text" placeholder="Username" required />
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            required
+          />
 
           <div class="forgot">
             <a href="#">Forgot password?</a>
@@ -24,7 +31,7 @@
         </form>
 
         <div class="signup">
-          Don’t have an account? <a href="register.html">Sign up</a>
+          Don't have an account? <a href="/register">Sign up</a>
         </div>
       </div>
 
@@ -35,6 +42,33 @@
         />
       </div>
     </main>
+
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const errorMsg = document.getElementById("error-msg");
+
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            window.location.href = "/";
+          } else {
+            errorMsg.textContent = data.error;
+            errorMsg.style.display = "block";
+          }
+        });
+    </script>
   </body>
 </html>
 <a href="/">🎫</a>

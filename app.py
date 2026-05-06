@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, render_template, g, request
+from flask import Flask, jsonify, render_template, g, request, session
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import sqlite3
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
+from auth import init_user_db, create_user, authenticate_user, get_user_by_username, get_user_by_id, login_required
 
 app = Flask(__name__)
 CORS(app)
@@ -139,11 +140,12 @@ def products():
     return render_template("products.html")
 
 @app.route("/login")
-def login():
+def login_page():
     return render_template("login.html")
 
-@app.route("/register"):
-return render_template("register.html")
+@app.route("/register")
+def register_page():
+    return render_template("register.html")
 
 @app.route("/api/products")
 def get_products():
@@ -222,6 +224,7 @@ def add_product():
 
 if __name__ == "__main__":
     init_db()
+    init_user_db()
     app.run(debug=True)
 
     # app.run(host="0.0.0.0", port=500)

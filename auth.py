@@ -1,6 +1,6 @@
 # USAGE: bcrypt
 
-import sqlite
+import sqlite3
 import bcrypt
 from functools import wraps
 from flask import session, jsonify
@@ -20,6 +20,7 @@ def init_user_db():
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT UNIQUE NOT NULL,
+                email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL
             )
         """)
@@ -38,14 +39,16 @@ def create_user(username, email, password):
     try:
         conn = get_user_db()
         conn.execute(
-            "INSERT INTO users (username, password) VALUES (?, ?)",
-            (username, hashed_password(password))
+            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+            (username, email, hashed_password(password))
         )
         conn.commit()
         conn.close()
         return True
     except sqlite3.IntegrityError:
         return False # If username or email already exists
+    finally:
+        conn.close()
 
 def get_user_by_username(username):
     """ Get user by username - as it says in the name """
@@ -68,7 +71,7 @@ def get_user_by_id(user_id):
 def authenticate_user(username, password):
     """ Authenticate user - check if username and password match """
     user = get_user_by_username(username)
-    if user and verify_hashed_password(password, user["hashed_password"]):
+    if user and verify_hashed_password(password, user["password"]):
         return dict(user)
     return None
 
