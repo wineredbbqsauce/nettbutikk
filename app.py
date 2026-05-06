@@ -11,9 +11,14 @@ CORS(app)
 DB_PATH = 'products.db'
 UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+app.secret_key = "supersecretkey" # For session management, would be better to have it in env variable or something, but this is just a simple project so whatever
+
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True) # Create the folder if not exists, obv u moron
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7) # Session expires after 1 week of inactivity, just to be safe
+app.config["SESSION_COOKIE_HTTPONLY"] = True # Prevents JavaScript from accessing the session cookie, helps against XSS
+app.config["SESSION_COOKIE_SECURE"] = False # Set to True if using HTTPS, but for local development we can leave it as False
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -61,6 +66,70 @@ def init_db():
             )
         conn.commit()
 
+
+# ============
+#    AUTH
+# ============
+
+@app.route("/api/auth/register", methods=["POST"])
+def register():
+    """ R u stupid? This is obvs for creating new users, like u know, registering.. """
+    data = request.get_json()
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+    email = data.get("email", "").strip()
+
+    if not username or not email or not password:
+        return jsonify({"error": "Username, email and password are required"}), 400
+    
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters long"}), 400
+    
+    if create_user(username, email, password):
+        return jsonify({"success": True, "message": "User created successfully"}), 201
+    else:
+        return jsonify({"error": "Username or email already exists"}), 400
+
+@app.route("/api/auth/login", methods=["POST"])
+def login():
+    """ Do u really think u can register a new user every single time u wanna log in? No, this is for logging in, like u know, authenticating.. """
+    data = request.get_json()
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+    
+    user = authenticate_user(username, password)
+    if user:
+        session["user_id"] = user["id"]
+        session["username"] = user["username"]
+        return jsonify({"success": True, "message": "Logged in successfully", "user": {"id": user["id"], "username": user["username"], "email": user["email"]}}), 200
+    else:
+        return jsonify({"error": "Invalid username or password"}), 401
+
+@app.route("/api/auth/logout", methods=["POST"])
+def logout():
+    """ U know what this is for, right? Logging out, ending the session, whatever u wanna call it.. """
+    session.clear()
+    return jsonify({"success": True, "message": "Logged out successfully"}), 200
+
+@app.route("/api/auth/me")
+def get_current_user():
+    """ You know.. sometimes i just want to be ego and look at myself, see if im still there, if the session is still valid and all that.. """
+    if "user_id" in session:
+        user = get_user_by_id(session["user_id"])
+        if user:
+            return jsonify({"user": {"id": user["id"], "username": user["username"], "email": user["email"]}}), 200
+        return jsonify({"error": "User not found"}), 404
+    return jsonify({"error": "Not authenticated"}), 401
+
+# ============ 
+# 
+#    ROUTES
+# 
+# ============
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -72,6 +141,9 @@ def products():
 @app.route("/login")
 def login():
     return render_template("login.html")
+
+@app.route("/register"):
+return render_template("register.html")
 
 @app.route("/api/products")
 def get_products():
@@ -151,3 +223,6 @@ def add_product():
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
+
+    # app.run(host="0.0.0.0", port=500)
+    # kjør denne for å hoste den på nettet og ikke bare lokat på datamaskinen
