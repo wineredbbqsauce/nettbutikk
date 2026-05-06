@@ -64,7 +64,14 @@ function createProductCard(product) {
     `;
 }
 
-// ====== CART MANAGEMENT ======
+/* 
+======== 
+ 
+CART MANAGEMENT - when that time comes
+
+======== 
+*/
+
 function addToCart(id, name, price) {
   const item = cart.find((i) => i.id === id);
 
@@ -122,6 +129,11 @@ function renderCart() {
 function toggleCart() {
   document.getElementById("cart-modal").classList.toggle("hidden");
 }
+
+// CART ER LAGET AV GITHUB - COPILOT ^^^^
+// - Ingen bruk enda
+// - Ikke brukbar enn så lenge
+// ---------------------
 
 // ====== FILTER & SORT ======
 function filterAndSort() {

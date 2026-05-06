@@ -86,7 +86,9 @@ body {
   justify-content: center;
   align-items: center;
   font-weight: 600;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
   transform: scale(0);
 }
 
@@ -177,7 +179,9 @@ nav a.active::after {
   border-radius: 20px;
   padding: 0.5rem 2rem 0.5rem 1rem;
   font-family: var(--font-family);
-  transition: width 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    width 0.3s ease,
+    box-shadow 0.3s ease;
   width: 150px;
 }
 
@@ -280,7 +284,9 @@ nav a.active::after {
   font-weight: 500;
   cursor: pointer;
   font-family: var(--font-family);
-  transition: background 0.15s, transform 0.1s;
+  transition:
+    background 0.15s,
+    transform 0.1s;
 }
 
 .overlay-btn:hover {
@@ -409,6 +415,8 @@ nav a.active::after {
   padding: 28px;
   width: 90%;
   max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -552,7 +560,9 @@ nav a.active::after {
   justify-content: center;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.18s, background 0.15s;
+  transition:
+    opacity 0.18s,
+    background 0.15s;
   z-index: 10;
 }
 
@@ -668,7 +678,6 @@ nav a.active::after {
     gap: 1rem;
   }
 }
-
 
 .modal-box.product-detail {
   max-width: 700px;
