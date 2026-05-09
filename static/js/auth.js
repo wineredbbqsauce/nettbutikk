@@ -125,7 +125,7 @@ function showMessage(message, type) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-//  async function checkAuth() {
+  async function checkAuth() {
     try {
       const res = await fetch(`${API_URL}/me`);
       if (res.ok) {
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error checking auth status:", error);
       updateCartUIForLoggedOut();
     }
- // }
+  }
 
   //   async function register(username, email, password) {
   //     try {

@@ -147,11 +147,11 @@ const Cart = {
 
 // Global func
 async function addToCart(productId) {
+  const btn = event.target;
   event.stopPropagation();
   const ok = await Cart.requireLogin();
   if (!ok) return;
 
-  const btn = event.target;
   btn.textContent = "Added!";
   btn.classList.add("added");
   await Cart.add(productId);
@@ -163,10 +163,10 @@ async function addToCart(productId) {
 
 async function addToCartFromModal() {
   if (!currentProduct) return;
+  const btn = event.target;
   const ok = await Cart.requireLogin();
   if (!ok) return;
 
-  const btn = event.target;
   await Cart.add(currentProduct);
   btn.textContent = "Added!";
   btn.style.background = "#28a745";
