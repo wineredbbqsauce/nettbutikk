@@ -55,7 +55,7 @@ async function loadProducts() {
         <div class="image" onclick="openProductModal(${p.id})">
           <img src="${p.image_url || ""}" alt="${p.name}" onerror="this.style.display='none'">
           <div class="overlay">
-            <button class="overlay-btn" onclick="addToCart(event, this, ${p.id})">Add to Cart</button>
+          <button class="overlay-btn" onclick="addToCart(${p.id})">Add to Cart</button>
           </div>
           <button class="delete-btn" onclick="deleteProduct(event, ${p.id})" style="pointer-events: ${removeMode ? "auto" : "none"}; opacity: ${removeMode ? "1" : "0"}";>🗑</button>
         </div>
@@ -106,7 +106,7 @@ function closeProductModal() {
   document.getElementById("product-modal").classList.add("hidden");
   currentProduct = null;
 }
-
+/*
 function addToCartFromModal() {
   const btn = event.target;
   btn.textContent = "Added!";
@@ -118,7 +118,7 @@ function addToCartFromModal() {
     closeProductModal();
   }, 1400);
 }
-
+*/
 // Close modal when clicking out - would be a nice touch
 document.addEventListener("click", function (event) {
   const modal = document.getElementById("product-modal");
@@ -165,8 +165,8 @@ async function deleteProduct(event, id) {
   }
 }
 
-function addToCart(event, btn, id) {
-  event.stopPropagation(); // dont trigger card click
+/* function addToCart(event, btn, id) {
+  // event.stopPropagation(); // dont trigger card click
   btn.textContent = "Added!";
   btn.classList.add("added");
   setTimeout(() => {
@@ -174,6 +174,7 @@ function addToCart(event, btn, id) {
     btn.classList.remove("added");
   }, 1400);
 }
+*/
 
 // Show preview when file is selected
 document.getElementById("new-image").addEventListener("change", function () {

@@ -15,6 +15,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
+    <link rel="icon" type="image/png" href="/static/assets/logo.png" />
   </head>
   <body>
     <!-- Header / Navigation -->
@@ -210,31 +211,9 @@
       </div>
     </footer>
 
-    <!-- CART MODAL -->
-    <div id="cart-modal" class="cart-modal hidden">
-      <div class="cart-content">
-        <div class="cart-header">
-          <h2>Your Cart</h2>
-          <button class="close-cart" onclick="toggleCart()">✕</button>
-        </div>
-
-        <div class="cart-items" id="cart-items">
-          <p class="empty-message">Your cart is empty</p>
-        </div>
-
-        <div class="cart-footer">
-          <div class="cart-summary">
-            <span>Subtotal:</span>
-            <span id="cart-total">$0.00</span>
-          </div>
-          <button class="cta-button" style="width: 100%">CHECKOUT</button>
-        </div>
-      </div>
-    </div>
-
     <!-- NOTIFICATION -->
     <div id="notification" class="notification hidden"></div>
-
-    <script src="/static/index.js"></script>
+    <script src="/static/js/cart.js"></script>
+    <script src="/static/js/index.js"></script>
   </body>
 </html>

@@ -47,6 +47,17 @@ def init_db():
                 description TEXT
                 )
            """)
+        
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS cart (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id     INTEGER NOT NULL,
+                product_id  INTEGER NOT NULL,
+                quantity    INTEGER NOT NULL DEFAULT 1,
+                FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+                UNIQUE(user_id, product_id)    
+                )                         
+            """)
         if conn.execute(
             "SELECT COUNT(*) FROM products"
         ).fetchone()[0] == 0:
@@ -124,6 +135,99 @@ def get_current_user():
             return jsonify({"user": {"id": user["id"], "username": user["username"], "email": user["email"]}}), 200
         return jsonify({"error": "User not found"}), 404
     return jsonify({"error": "Not authenticated"}), 401
+
+
+# ============
+#    CART
+# ============
+
+@app.route("/api/cart", methods=["GET"])
+def get_cart():
+    if "user_id" not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    db = get_db()
+    rows = db.execute("""
+        SELECT cart.id, cart.quantity, products.id as product_id, products.name, products.price, products.image_url
+        FROM cart
+        JOIN products ON cart.product_id = products.id
+        WHERE cart.user_id = ?
+    """, (session["user_id"],)).fetchall()
+
+    return jsonify([dict(r) for r in rows])
+
+@app.route("/api/cart/add", methods=["POST"])
+def cart_add():
+    if "user_id" not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    data = request.get_json()
+    product_id = data.get("product_id")
+    quantity = data.get("quantity", 1)
+
+    if not product_id:
+        return jsonify({"error": "product_id is required"}), 400
+    
+    db = get_db()
+    # Hvis produktet allerede er i kurven, øk antallet - obvs
+    db.execute("""
+        INSERT INTO cart (user_id, product_id, quantity)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id, product_id)
+        DO UPDATE SET quantity = quantity + excluded.quantity
+""", (session["user_id"], product_id, quantity))
+    db.commit()
+    return jsonify({"success": True}), 200
+
+@app.route("/api/cart/update", methods=["POST"])
+def cart_update():
+    if "user_id" not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    data = request.get_json()
+    product_id = data.get("product_id")
+    quantity = data.get("quantity")
+
+    if not product_id or quantity is None:
+        return jsonify({"error": "Product_id and quantity are required"}), 400
+    
+    db = get_db()
+    if quantity <= 0:
+        db.execute("DELETE FROM cart WHERE user_id = ? AND product_id = ?", (session["user_id"], product_id))
+    
+    else:
+        db.execute("UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?", (quantity, session["user_id"], product_id))
+    
+    db.commit()
+    return jsonify({"success": True}), 200
+
+@app.route("/api/cart/remove", methods=["POST"])
+def cart_remove():
+    if "user_id" not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    data = request.get_json()
+    product_id = data.get("product_id")
+
+    if not product_id:
+        return jsonify({"error": "product_id is required"}), 400
+    
+    db = get_db()
+    db.execute("DELETE FROM cart WHERE user_id = ? AND product_id = ?", (session["user_id"], product_id))
+
+    db.commit()
+    return jsonify({"success": True}), 200
+
+
+@app.route("/api/cart/clear", methods=["POST"])
+def cart_clear():
+    if "user_id" not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    db = get_db()
+    db.execute("DELETE FROM cart WHERE user_id = ?", (session["user_id"],))
+    db.commit()
+    return jsonify({"success": True}), 200
 
 # ============ 
 # 
@@ -227,5 +331,5 @@ if __name__ == "__main__":
     init_user_db()
     app.run(debug=True)
 
-    # app.run(host="0.0.0.0", port=500)
+    # app.run(host="0.0.0.0", port=5000)
     # kjør denne for å hoste den på nettet og ikke bare lokat på datamaskinen

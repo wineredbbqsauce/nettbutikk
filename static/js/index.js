@@ -1,5 +1,4 @@
 const API = "/api/products";
-let cart = [];
 let allProducts = [];
 
 // ====== INITIALIZATION ======
@@ -10,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEventListeners() {
-  document.getElementById("cart-toggle").addEventListener("click", toggleCart);
   document
     .getElementById("search-input")
     .addEventListener("input", filterAndSort);
@@ -56,84 +54,13 @@ function createProductCard(product) {
                 <div class="product-name">${product.name}</div>
                 <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
                 <div class="product-desc">${product.description || "Premium quality item"}</div>
-                <button class="add-to-cart-btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price})">
+                <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
                     Add to Cart
                 </button>
             </div>
         </div>
     `;
 }
-
-/* 
-======== 
- 
-CART MANAGEMENT - when that time comes
-
-======== 
-*/
-
-function addToCart(id, name, price) {
-  const item = cart.find((i) => i.id === id);
-
-  if (item) {
-    item.qty++;
-  } else {
-    cart.push({ id, name, price, qty: 1 });
-  }
-
-  updateCartUI();
-  showNotification(`${name} added to cart`);
-}
-
-function removeFromCart(id) {
-  cart = cart.filter((i) => i.id !== id);
-  updateCartUI();
-}
-
-function updateCartUI() {
-  const count = cart.reduce((sum, i) => sum + i.qty, 0);
-  document.querySelector(".cart-count").textContent = count;
-  renderCart();
-}
-
-function renderCart() {
-  const container = document.getElementById("cart-items");
-
-  if (cart.length === 0) {
-    container.innerHTML = '<p class="empty-message">Your cart is empty</p>';
-    document.getElementById("cart-total").textContent = "$0.00";
-    return;
-  }
-
-  container.innerHTML = cart
-    .map(
-      (item) => `
-        <div class="cart-item">
-            <div class="cart-item-info">
-                <div class="cart-item-name">${item.name}</div>
-                <div class="cart-item-qty">x${item.qty}</div>
-            </div>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-                <button class="remove-btn" onclick="removeFromCart(${item.id})">✕</button>
-            </div>
-        </div>
-    `,
-    )
-    .join("");
-
-  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  document.getElementById("cart-total").textContent = `$${total.toFixed(2)}`;
-}
-
-function toggleCart() {
-  document.getElementById("cart-modal").classList.toggle("hidden");
-}
-
-// CART ER LAGET AV GITHUB - COPILOT ^^^^
-// - Ingen bruk enda
-// - Ikke brukbar enn så lenge
-// ---------------------
 
 // ====== FILTER & SORT ======
 function filterAndSort() {
@@ -143,7 +70,7 @@ function filterAndSort() {
   let filtered = allProducts.filter(
     (p) =>
       p.name.toLowerCase().includes(query) ||
-      p.description.toLowerCase().includes(query),
+      (p.description || "").toLowerCase().includes(query),
   );
 
   if (sort === "price-low") {
