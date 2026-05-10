@@ -251,6 +251,14 @@ def login_page():
 def register_page():
     return render_template("register.html")
 
+@app.route("/about-us")
+def about_us():
+    return render_template("about-us.html")
+
+@app.route("/contact")
+def contact_page():
+    return render_template("index.html")
+
 @app.route("/api/products")
 def get_products():
     db = get_db()

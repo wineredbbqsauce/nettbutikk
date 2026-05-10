@@ -29,7 +29,7 @@
         <ul>
           <li><a href="/" class="active">Home</a></li>
           <li><a href="/products">Products</a></li>
-          <li><a href="#">About Us</a></li>
+          <li><a href="/about-us">About Us</a></li>
           <li><a href="#">Contact Us</a></li>
         </ul>
       </nav>
@@ -196,7 +196,7 @@
         <div class="footer-section">
           <h4>LINKS</h4>
           <a href="#shop">Shop</a>
-          <a href="#about">About</a>
+          <a href="/about-us">About</a>
           <a href="#contact">Contact</a>
         </div>
         <div class="footer-section">
@@ -215,5 +215,23 @@
     <div id="notification" class="notification hidden"></div>
     <script src="/static/js/cart.js"></script>
     <script src="/static/js/index.js"></script>
+    <script>
+      // ====== SEARCH BAR ======
+      const navSearch = document.querySelector(".search-bar input");
+      const navSearchBtn = document.querySelector(".search-bar .fa-search");
+
+      function goToSearch() {
+        const query = navSearch.value.trim();
+        if (query) {
+          window.location.href = `/products?search=${encodeURIComponent(query)}`;
+        }
+      }
+
+      navSearch.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") goToSearch();
+      });
+
+      navSearchBtn.addEventListener("click", goToSearch);
+    </script>
   </body>
 </html>

@@ -528,7 +528,6 @@ nav a.active::after {
   padding: 8px 14px;
 }
 
-/* card turns red in remove mode */
 .card.remove-mode .image::after {
   content: "";
   position: absolute;
@@ -543,7 +542,6 @@ nav a.active::after {
   background: rgba(220, 30, 30, 0.35);
 }
 
-/* trash button on card */
 .delete-btn {
   position: absolute;
   top: 10px;
@@ -575,7 +573,6 @@ nav a.active::after {
   background: rgba(180, 0, 0, 0.95);
 }
 
-/* card border turns red in remove mode */
 .card.remove-mode .image {
   outline: 2px solid rgba(220, 30, 30, 0.5);
 }
@@ -660,7 +657,6 @@ nav a.active::after {
   transform: scale(0.98);
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   .product-modal-content {
     flex-direction: column;
@@ -686,4 +682,68 @@ nav a.active::after {
 
 .modal-box.product-detail .modal-close {
   z-index: 10;
+}
+
+/* ========================
+   TOOLBNAR
+======================== */
+
+.toolbnar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 auto;
+  margin-top: 1rem;
+  padding: 0 2rem;
+  gap: 12px;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.filters input {
+  padding: 9px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  width: 220px;
+  transition: box-shadow 0.2s ease, width 0.3s ease;
+  outline: none;
+}
+
+.filters input:focus {
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+  width: 280px;
+}
+
+.filters select {
+  padding: 9px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: box-shadow 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236c757d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.filters select:focus {
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+.toolbnar-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }

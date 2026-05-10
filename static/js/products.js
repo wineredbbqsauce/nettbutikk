@@ -36,10 +36,12 @@ function renderProducts(productsToRender) {
 const API = "/api/products";
 
 let removeMode = false;
+let allProducts = [];
 
 async function loadProducts() {
   const res = await fetch(API);
   const products = await res.json();
+  allProducts = products;
 
   const grid = document.getElementById("product-grid");
 
@@ -48,26 +50,72 @@ async function loadProducts() {
     return;
   }
 
+  renderProducts(products);
+
+  // Read URL param and filter if present
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get("search") || "";
+  if (query) {
+    document.getElementById("search-input").value = query;
+    filterAndSort();
+  }
+}
+
+function renderProducts(products) {
+  const grid = document.getElementById("product-grid");
+
+  if (products.length === 0) {
+    grid.innerHTML = "<p style='padding:24px;'>No products found.</p>";
+    return;
+  }
+
   grid.innerHTML = products
     .map(
       (p) => `
-      <div class="card" id="card-${p.id}">
-        <div class="image" onclick="openProductModal(${p.id})">
-          <img src="${p.image_url || ""}" alt="${p.name}" onerror="this.style.display='none'">
-          <div class="overlay">
+    <div class="card" id="card-${p.id}">
+      <div class="image" onclick="openProductModal(${p.id})">
+        <img src="${p.image_url || ""}" alt="${p.name}" onerror="this.style.display='none'">
+        <div class="overlay">
           <button class="overlay-btn" onclick="addToCart(${p.id})">Add to Cart</button>
-          </div>
-          <button class="delete-btn" onclick="deleteProduct(event, ${p.id})" style="pointer-events: ${removeMode ? "auto" : "none"}; opacity: ${removeMode ? "1" : "0"}";>🗑</button>
         </div>
-        <div class="info" onclick="openProductModal(${p.id})">
-          <span class="title">${p.name}</span>
-          <span class="price">$${parseFloat(p.price).toFixed(2)}</span>
-        </div>
+        <button class="delete-btn" onclick="deleteProduct(event, ${p.id})" style="pointer-events: ${removeMode ? "auto" : "none"}; opacity: ${removeMode ? "1" : "0"}">🗑</button>
       </div>
-    `,
+      <div class="info" onclick="openProductModal(${p.id})">
+        <span class="title">${p.name}</span>
+        <span class="price">$${parseFloat(p.price).toFixed(2)}</span>
+      </div>
+    </div>
+  `,
     )
     .join("");
 }
+
+function filterAndSort() {
+  const query = document.getElementById("search-input").value.toLowerCase();
+  const sort = document.getElementById("sort-select").value;
+
+  let filtered = allProducts.filter(
+    (p) =>
+      p.name.toLowerCase().includes(query) ||
+      (p.description || "").toLowerCase().includes(query),
+  );
+
+  if (sort === "price-low") filtered.sort((a, b) => a.price - b.price);
+  else if (sort === "price-high") filtered.sort((a, b) => b.price - a.price);
+  else if (sort === "name")
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+  renderProducts(filtered);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document
+    .getElementById("search-input")
+    .addEventListener("input", filterAndSort);
+  document
+    .getElementById("sort-select")
+    .addEventListener("change", filterAndSort);
+});
 
 let currentProduct = null;
 

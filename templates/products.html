@@ -35,7 +35,7 @@
         <ul>
           <li><a href="/">Home</a></li>
           <li><a href="/products" class="active">Products</a></li>
-          <li><a href="#about">About Us</a></li>
+          <li><a href="/about-us">About Us</a></li>
           <li><a href="#contact">Contact Us</a></li>
         </ul>
       </nav>
@@ -61,17 +61,32 @@
     </header>
 
     <main>
-      <div
-        style="display: flex; justify-content: flex-end; padding: 16px 24px 0"
-      >
-        <button class="add-btn" onclick="openAddModal()">+ Add Products</button>
-        <button
-          class="remove-btn"
-          id="remove-toggle"
-          onclick="toggleRemoveMode()"
-        >
-          🗑 Remove
-        </button>
+      <div class="toolbnar">
+        <div class="filters">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search products..."
+          />
+          <select id="sort-select">
+            <option value="">Sort By</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="name">Name</option>
+          </select>
+        </div>
+        <div class="toolbnar-actions">
+          <button class="add-btn" onclick="openAddModal()">
+            + Add Products
+          </button>
+          <button
+            class="remove-btn"
+            id="remove-toggle"
+            onclick="toggleRemoveMode()"
+          >
+            🗑 Remove
+          </button>
+        </div>
       </div>
       <div class="products" id="product-grid"></div>
 
@@ -176,5 +191,24 @@
 
     <script src="/static/js/cart.js"></script>
     <script src="/static/js/products.js"></script>
+    <script>
+      // ====== SEARCH BAR ======
+      const navSearch = document.querySelector(".search-bar input");
+      const navSearchBtn = document.querySelector(".search-bar .fa-search");
+
+      function goToSearch() {
+        const query = navSearch.value.trim();
+        if (query) {
+          document.getElementById("search-input").value = query;
+          filterAndSort();
+        }
+      }
+
+      navSearch.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") goToSearch();
+      });
+
+      navSearchBtn.addEventListener("click", goToSearch);
+    </script>
   </body>
 </html>
