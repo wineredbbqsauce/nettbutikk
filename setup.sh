@@ -17,6 +17,7 @@ NC="\033[0m" # No Colour
 
 VENV_DIR=".venv"
 PORT=5000
+SERVER_IP=$(hostname -I | awk '{print $1}')
 
 echo -e "${MAGENTA}========================================${NC}"
 echo -e "  ${MAGENTA}Nettbutikk — Oppsett og oppstart${NC}"
@@ -84,6 +85,7 @@ fi
 echo ""
 echo -e "${GREEN}========================================"
 echo -e "  Åpne i nettleseren: http://localhost:$PORT"
+echo -e "  Åpne i nettleseren: http://$SERVER_IP:$PORT"
 echo -e "  Stopp serveren:     CTRL+C"
 echo -e "========================================${NC}"
 echo ""
