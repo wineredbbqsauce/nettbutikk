@@ -257,7 +257,7 @@ def about_us():
 
 @app.route("/contact")
 def contact_page():
-    return render_template("index.html")
+    return render_template("contact.html")
 
 @app.route("/api/products")
 def get_products():
