@@ -3,73 +3,192 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+
+    <title>Login — Section</title>
+
     <link rel="stylesheet" href="/static/css/login.css" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+
+    <link href="https://fonts.cdnfonts.com/css/raqillas" rel="stylesheet" />
+
     <link rel="icon" type="image/png" href="/static/assets/logo.png" />
   </head>
+
   <body>
-    <main class="container">
-      <div class="login-card">
-        <h1>Welcome Back</h1>
-        <p>Please log in to your account</p>
+    <!-- HEADER -->
 
-        <div id="error-msg" style="color: red; display: none"></div>
+    <header>
+      <div class="logo">
+        <img src="/static/assets/logo.png" alt="" />
+        <span>Section</span>
+      </div>
 
-        <form id="login-form">
-          <input id="username" type="text" placeholder="Username" required />
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            required
-          />
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/about-us">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+        </ul>
+      </nav>
 
-          <div class="forgot">
-            <a href="#">Forgot password?</a>
-          </div>
+      <div class="header-actions">
+        <!-- Search Bar -->
+        <div class="search-bar">
+          <input type="text" placeholder="Search..." />
+          <i class="fas fa-search"></i>
+        </div>
 
-          <button type="submit">Log In</button>
-        </form>
+        <!-- Cart Icon -->
+        <div class="cart-icon" id="cart-toggle">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-count">0</span>
+        </div>
 
-        <div class="signup">
-          Don't have an account? <a href="/register">Sign up</a>
+        <!-- Login / Register Icon -->
+        <div class="login-btn">
+          <a href="/login"><i class="fa-solid fa-user"></i></a>
         </div>
       </div>
+    </header>
 
-      <div class="illustration">
-        <img
-          src="/static/assets/Ung-mann-ved-skrivebordet-med-laptop.png"
-          alt="Man working illustration"
-        />
-      </div>
+    <!-- main -->
+    <main class="registration-page">
+      <!-- REGISTER -->
+
+      <section class="register-page">
+        <div class="register-container">
+          <!-- LEFT -->
+
+          <div class="register-content">
+            <span class="section-label">WELCOME BACK</span>
+
+            <h1 class="register-title">
+              Sign in to
+              <span>Section</span>
+            </h1>
+
+            <p class="register-subtitle">
+              Join thousands of customers discovering premium curated products.
+            </p>
+
+            <div class="register-features">
+              <div class="feature-item">
+                <span class="feature-icon"><i class="fas fa-heart"></i></span>
+                <span>Access your saved favorites</span>
+              </div>
+
+              <div class="feature-item">
+                <span class="feature-icon"><i class="fas fa-box"></i></span>
+                <span>Track your latest orders</span>
+              </div>
+
+              <div class="feature-item">
+                <span class="feature-icon"><i class="fas fa-heart"></i></span>
+                <span>Fast and secure checkout</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+
+          <div class="register-card">
+            <form class="register-form" id="login-form">
+              <div class="form-group">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  placeholder="john@example.com"
+                  id="email"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Password</label>
+
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    placeholder="Minimum 8 characters"
+                    id="password"
+                    required
+                  />
+
+                  <i class="fa-solid fa-eye" id="togglePassword"></i>
+                </div>
+              </div>
+
+              <p
+                id="error-msg"
+                style="
+                  color: #ff4d4d;
+                  font-size: 0.8rem;
+                  display: none;
+                  margin-bottom: 1rem;
+                "
+              ></p>
+              <div class="form-group"></div>
+              <!-- <div class="divider">or</div>
+
+              <div class="social-buttons">
+                <button class="social-btn">Google</button>
+                <button class="social-btn">Apple</button>
+              </div> -->
+
+              <button type="submit" class="cta-button">LOG IN</button>
+            </form>
+
+            <div class="register-footer">
+              Do not have an account?
+              <a href="/register">Create One</a>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <script>
-      document
-        .getElementById("login-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-
-          const username = document.getElementById("username").value;
-          const password = document.getElementById("password").value;
-          const errorMsg = document.getElementById("error-msg");
-
-          const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-          });
-
-          const data = await res.json();
-
-          if (res.ok) {
-            window.location.href = "/";
-          } else {
-            errorMsg.textContent = data.error;
-            errorMsg.style.display = "block";
-          }
-        });
-    </script>
+    <script src="/static/js/auth.js"></script>
   </body>
 </html>
-<!-- <a href="/">🎫</a> -->
+
+<!-- <div class="login-left">
+  <span class="label">Welcome Back</span>
+
+  <h1>Sign in to <span>Section</span></h1>
+
+  <p>
+    Access your saved products, track your orders and continue exploring premium
+    curated collections.
+  </p>
+
+  <div class="benefits">
+    <div class="benefit-item">
+      <div class="benefit-icon"><i class="fas fa-heart"></i></div>
+      <span>Access your saved favorites</span>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-icon"><i class="fas fa-box"></i></div>
+      <span>Track your latest orders</span>
+    </div>
+
+    <div class="benefit-item">
+      <div class="benefit-icon"><i class="fas fa-bolt"></i></div>
+      <span>Fast and secure checkout</span>
+    </div>
+  </div>
+</div> -->

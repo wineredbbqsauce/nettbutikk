@@ -19,42 +19,43 @@ def init_user_db():
         conn.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
+                firstname TEXT NOT NULL,
+                lastname TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL
             )
         """)
         conn.commit()
 
-def hashed_password(password):
+def hashed_password(password: str) -> str:
     """Hash a password for storing - wouldnt be that good to have it plain.. obvs.. """
-    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-def verify_hashed_password(password, hashed_password):
+def verify_hashed_password(plain: str, hashed: str) -> bool:
     """Verify if it is the same password """
-    return bcrypt.checkpw(password.encode("utf-8"), hashed_password)
+    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
 
-def create_user(username, email, password):
+def create_user(firstname, lastname, email, password):
     """ Create new user """
     try:
         conn = get_user_db()
         conn.execute(
-            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-            (username, email, hashed_password(password))
+            "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)",
+            (firstname, lastname, email, hashed_password(password))
         )
         conn.commit()
-        conn.close()
         return True
     except sqlite3.IntegrityError:
-        return False # If username or email already exists
+        return False # If user or email already exists
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
-def get_user_by_username(username):
-    """ Get user by username - as it says in the name """
+def get_user_by_email(email):
+    """ Get user by email - as it says in the name """
     conn = get_user_db()
     user = conn.execute(
-        "SELECT * FROM users WHERE username = ?", (username,)
+        "SELECT * FROM users WHERE email = ?", (email,)
     ).fetchone()
     conn.close()
     return user
@@ -68,9 +69,9 @@ def get_user_by_id(user_id):
     conn.close()
     return user
 
-def authenticate_user(username, password):
-    """ Authenticate user - check if username and password match """
-    user = get_user_by_username(username)
+def authenticate_user(email, password):
+    """ Authenticate user - check if email and password match """
+    user = get_user_by_email(email)
     if user and verify_hashed_password(password, user["password"]):
         return dict(user)
     return None

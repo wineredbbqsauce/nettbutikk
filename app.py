@@ -5,7 +5,7 @@ import sqlite3
 import os
 import uuid
 from datetime import datetime, timedelta
-from auth import init_user_db, create_user, authenticate_user, get_user_by_username, get_user_by_id, login_required
+from auth import init_user_db, create_user, authenticate_user, get_user_by_email, get_user_by_id, login_required
 
 app = Flask(__name__)
 CORS(app)
@@ -87,38 +87,39 @@ def init_db():
 def register():
     """ R u stupid? This is obvs for creating new users, like u know, registering.. """
     data = request.get_json()
-    username = data.get("username", "").strip()
+    firstname = data.get("firstName", "").strip()
+    lastname = data.get("lastName", "").strip()
     password = data.get("password", "").strip()
     email = data.get("email", "").strip()
 
-    if not username or not email or not password:
-        return jsonify({"error": "Username, email and password are required"}), 400
+    if not firstname or not lastname or not email or not password:
+        return jsonify({"error": "Firstname, Lastname, Email and Password are required"}), 400
     
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters long"}), 400
     
-    if create_user(username, email, password):
+    if create_user(firstname, lastname, email, password):
         return jsonify({"success": True, "message": "User created successfully"}), 201
     else:
-        return jsonify({"error": "Username or email already exists"}), 400
+        return jsonify({"error": "Email already exists"}), 400
 
 @app.route("/api/auth/login", methods=["POST"])
 def login():
     """ Do u really think u can register a new user every single time u wanna log in? No, this is for logging in, like u know, authenticating.. """
     data = request.get_json()
-    username = data.get("username", "").strip()
+    email = data.get("email", "").strip()
     password = data.get("password", "").strip()
 
-    if not username or not password:
-        return jsonify({"error": "Username and password are required"}), 400
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
     
-    user = authenticate_user(username, password)
+    user = authenticate_user(email, password)
     if user:
         session["user_id"] = user["id"]
-        session["username"] = user["username"]
-        return jsonify({"success": True, "message": "Logged in successfully", "user": {"id": user["id"], "username": user["username"], "email": user["email"]}}), 200
+        session["email"] = user["email"]
+        return jsonify({"success": True, "message": "Logged in successfully", "user": {"id": user["id"], "email": user["email"]}}), 200
     else:
-        return jsonify({"error": "Invalid username or password"}), 401
+        return jsonify({"error": "Invalid email or password"}), 401
 
 @app.route("/api/auth/logout", methods=["POST"])
 def logout():
@@ -132,7 +133,7 @@ def get_current_user():
     if "user_id" in session:
         user = get_user_by_id(session["user_id"])
         if user:
-            return jsonify({"user": {"id": user["id"], "username": user["username"], "email": user["email"]}}), 200
+            return jsonify({"user": {"id": user["id"], "firstname": user["firstname"], "lastname": user["lastname"], "email": user["email"]}}), 200
         return jsonify({"error": "User not found"}), 404
     return jsonify({"error": "Not authenticated"}), 401
 

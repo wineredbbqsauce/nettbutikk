@@ -1,253 +1,182 @@
 const API_URL = "/api/auth";
 
-async function register(username, email, password) {
+// ====== HELPERS ======
+
+function showMessage(message, type) {
+  const existing = document.querySelector(".toast-msg");
+  if (existing) existing.remove();
+
+  const toast = document.createElement("div");
+  toast.className = "toast-msg";
+  toast.textContent = message;
+  toast.style.cssText = `
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    z-index: 9999;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    animation: slideIn 0.3s ease;
+    background: ${type === "success" ? "#28a745" : "#dc3545"};
+    color: white;
+  `;
+
+  const style = document.createElement("style");
+  style.textContent = `@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }`;
+  document.head.appendChild(style);
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 4000);
+}
+
+function getFormValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : "";
+}
+
+// ====== REGISTER ======
+
+async function handleRegister(e) {
+  if (e) e.preventDefault();
+
+  const firstName = getFormValue("first-name");
+  const lastName = getFormValue("last-name");
+  // const username =
+  //   (firstName + lastName).toLowerCase().replace(/\s/g, "") ||
+  //   getFormValue("username");
+  const email = getFormValue("email");
+  const password = getFormValue("password");
+  const confirmPassword = getFormValue("confirmPassword");
+
+  if (!firstName || !lastName || !email || !password) {
+    showMessage("Please fill in all required fields.", "error");
+    return;
+  }
+
+  if (password.length < 6) {
+    showMessage("Password must be at least 6 characters.", "error");
+    return;
+  }
+
+  if (confirmPassword && password !== confirmPassword) {
+    showMessage("Passwords do not match.", "error");
+    return;
+  }
+
   try {
     const res = await fetch(`${API_URL}/register`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-        email: email,
-        password: password,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firstName, lastName, email, password }),
     });
+
     const data = await res.json();
 
     if (res.ok) {
-      showMessage("Registration successful! Please log in.", "success");
-
-      // clear form
-      document.getElementById("registerForm").reset();
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 2000);
-      return true;
+      showMessage("Account created! Redirecting to login...", "success");
+      setTimeout(() => (window.location.href = "/login"), 2000);
     } else {
-      showMessage(data.error || "Registration failed", "error");
-      return false;
+      showMessage(data.error || "Registration failed.", "error");
     }
-  } catch (error) {
-    showMessage("Error: " + error.message, "error");
-    console.error("Registration error: ", error);
-    return false;
+  } catch (err) {
+    showMessage("Something went wrong. Try again.", "error");
+    console.error(err);
   }
 }
 
-async function login(username, password) {
+// ====== LOGIN ======
+
+async function handleLogin(e) {
+  if (e) e.preventDefault();
+
+  const email = getFormValue("email");
+  const password = getFormValue("password");
+
+  if (!email || !password) {
+    showMessage("Please enter your email and password.", "error");
+    return;
+  }
+
   try {
     const res = await fetch(`${API_URL}/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
+
     const data = await res.json();
 
     if (res.ok) {
-      showMessage("Login successful!", "success");
-
-      // store user info (optional, since session is server-side)
-      // But i choose to have it, cuz i can
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      // redirect to home or dashboard after 1.5s
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1500);
-      return true;
+      showMessage("Logged in! Redirecting...", "success");
+      setTimeout(() => (window.location.href = "/"), 1500);
     } else {
-      showMessage(data.error || "Login failed", "error");
-      return false;
+      showMessage(data.error || "Invalid credentials.", "error");
     }
-  } catch (error) {
-    showMessage("Error: " + error.message, "error");
-    console.error("Login error: ", error);
-    return false;
+  } catch (err) {
+    showMessage("Something went wrong. Try again.", "error");
+    console.error(err);
   }
 }
+
+// ====== LOGOUT ======
 
 async function logout() {
   try {
-    const res = await fetch(`${API_URL}/logout`, {
-      method: "POST",
-    });
-
-    if (res.ok) {
-      localStorage.removeItem("user");
-      showMessage("Logged out successfully", "success");
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 1000);
-    }
-  } catch (error) {
-    console.error("Logout error", error);
-    showMessage("Error logging out", "error");
+    await fetch(`${API_URL}/logout`, { method: "POST" });
+    localStorage.removeItem("user");
+    showMessage("Logged out.", "success");
+    setTimeout(() => (window.location.href = "/login"), 1000);
+  } catch (err) {
+    console.error("Logout error", err);
   }
 }
 
-function showMessage(message, type) {
-  // create message element
-  const messageDiv = document.createElement("div");
-  messageDiv.className = `message message-${type}`;
-  messageDiv.textContent = message;
+// ====== PASSWORD TOGGLE ======
 
-  messageDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 20px;
-        border-radius: 5px;
-        z-index: 9999;
-        font-weight: bold;
-        animation: slideIn 0.3s ease;
-    `;
+function setupPasswordToggle(inputId, toggleId) {
+  const input = document.getElementById(inputId);
+  const toggle = document.getElementById(toggleId);
+  if (!input || !toggle) return;
 
-  if (type === "success") {
-    messageDiv.style.backgroundColor = "#4caf50";
-    messageDiv.style.color = "white";
-  } else {
-    messageDiv.style.backgroundColor = "#f44336";
-    messageDiv.style.color = "white";
-  }
-
-  document.body.appendChild(messageDiv);
-
-  // remove after 4 seconds
-  setTimeout(() => {
-    messageDiv.remove();
-  }, 4000);
+  toggle.addEventListener("click", () => {
+    const isPassword = input.getAttribute("type") === "password";
+    input.setAttribute("type", isPassword ? "text" : "password");
+    toggle.classList.toggle("fa-eye-slash");
+  });
 }
+
+// ====== INIT ======
 
 document.addEventListener("DOMContentLoaded", () => {
-  async function checkAuth() {
-    try {
-      const res = await fetch(`${API_URL}/me`);
-      if (res.ok) {
-        const data = await res.json();
-        updateCartUIForLoggedIn(data.user);
-      } else {
-        updateCartUIForLoggedOut();
-      }
-    } catch (error) {
-      console.error("Error checking auth status:", error);
-      updateCartUIForLoggedOut();
+  // Hook up forms
+  const registerForm = document.getElementById("register-form");
+  if (registerForm) registerForm.addEventListener("submit", handleRegister);
+
+  const loginForm = document.getElementById("login-form");
+  if (loginForm) loginForm.addEventListener("submit", handleLogin);
+
+  // Password toggles
+  setupPasswordToggle("password", "togglePassword");
+  setupPasswordToggle("confirmPassword", "toggleConfirmPassword");
+
+  // Nav search
+  const navSearch = document.querySelector(".search-bar input");
+  const navSearchBtn = document.querySelector(".search-bar .fa-search");
+
+  if (navSearch && navSearchBtn) {
+    function goToSearch() {
+      const query = navSearch.value.trim();
+      if (query)
+        window.location.href = `/products?search=${encodeURIComponent(query)}`;
     }
-  }
-
-  //   async function register(username, email, password) {
-  //     try {
-  //       const res = await fetch(`${API_URL}/register`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           username: username,
-  //           email: email,
-  //           password: password,
-  //         }),
-  //       });
-  //       const data = await res.json();
-
-  //       if (res.ok) {
-  //         showMessage("Registration successful! Please log in.", "success");
-
-  //         // clear form
-  //         document.getElementById("registerForm").reset();
-  //         setTimeout(() => {
-  //           window.location.href = "/login";
-  //         }, 2000);
-  //         return true;
-  //       } else {
-  //         showMessage(data.error || "Registration failed", "error");
-  //         return false;
-  //       }
-  //     } catch (error) {
-  //       showMessage("Error: " + error.message, "error");
-  //       console.error("Registration error: ", error);
-  //       return false;
-  //     }
-  //   }
-
-  //   async function login(username, password) {
-  //     try {
-  //       const res = await fetch(`${API_URL}/login`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           username: username,
-  //           password: password,
-  //         }),
-  //       });
-  //       const data = await res.json();
-
-  //       if (res.ok) {
-  //         showMessage("Login successful!", "success");
-
-  //         // store user info (optional, since session is server-side)
-  //         // But i choose to have it, cuz i can
-  //         localStorage.setItem("user", JSON.stringify(data.user));
-
-  //         // redirect to home or dashboard after 1.5s
-  //         setTimeout(() => {
-  //           window.location.href = "/";
-  //         }, 1500);
-  //         return true;
-  //       } else {
-  //         showMessage(data.error || "Login failed", "error");
-  //         return false;
-  //       }
-  //     } catch (error) {
-  //       showMessage("Error: " + error.message, "error");
-  //       console.error("Login error: ", error);
-  //       return false;
-  //     }
-  //   }
-
-  //   async function logout() {
-  //     try {
-  //       const res = await fetch(`${API_URL}/logout`, {
-  //         method: "POST",
-  //       });
-
-  //       if (res.ok) {
-  //         localStorage.removeItem("user");
-  //         showMessage("Logged out successfully", "success");
-  //         setTimeout(() => {
-  //           window.location.href = "/login";
-  //         }, 1000);
-  //       }
-  //     } catch (error) {
-  //       console.error("Logout error", error);
-  //       showMessage("Error logging out", "error");
-  //     }
-  //   }
-
-  function updateCartUIForLoggedIn(user) {
-    const authContainer = document.getElementById("authContainer");
-    if (authContainer) {
-      authContainer.innerHTML = `
-        <span>Welcome, <strong>${user.username}</strong></span>
-        <button onclick="logout()" class="btn btn-logout">Logout</button>
-        `;
-    }
-  }
-
-  function updateCartUIForLoggedOut() {
-    const authContainer = document.getElementById("authContainer");
-    if (authContainer) {
-      authContainer.innerHTML = `
-            <a href="/login" class="btn btn-login">Login</a>
-            <a href="/register" class="btn btn-register">Register</a>
-        `;
-    }
+    navSearch.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") goToSearch();
+    });
+    navSearchBtn.addEventListener("click", goToSearch);
   }
 });
