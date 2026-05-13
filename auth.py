@@ -38,18 +38,15 @@ def verify_hashed_password(plain: str, hashed: str) -> bool:
 def create_user(firstname, lastname, email, password):
     """ Create new user """
     try:
-        conn = get_user_db()
-        conn.execute(
-            "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)",
-            (firstname, lastname, email, hashed_password(password))
-        )
-        conn.commit()
+        with get_user_db() as conn:
+            conn.execute(
+                "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)",
+                (firstname, lastname, email, hashed_password(password))
+            )
+            conn.commit()
         return True
     except sqlite3.IntegrityError:
         return False # If user or email already exists
-    finally:
-        if conn:
-            conn.close()
 
 def get_user_by_email(email):
     """ Get user by email - as it says in the name """
