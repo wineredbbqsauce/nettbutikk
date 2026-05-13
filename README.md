@@ -275,7 +275,7 @@ If things break or doens't work as they should, womp womp - ask [Google](https:/
 
 I will try to update the project as much as i can, but i do also have a life, so i cannot (and will not) update this as it's suits you.
 
-> _PS: There are some commens in the file in norwegian and some in english, i just dont have energy to do anything about it. Just use google translate._
+> _PS: There are some comments in the file in norwegian and some in english, I just dont have energy to do anything about it. Just use google translate._
 
 <br>
 <br>
