@@ -339,6 +339,7 @@ if __name__ == "__main__":
     init_db()
     init_user_db()
     app.run(debug=True)
+    # Marker ut denne (med # foran) eller fjern den for kunne kjøre profft 
 
     # app.run(host="0.0.0.0", port=5000)
-    # kjør denne for å hoste den på nettet og ikke bare lokat på datamaskinen
+    # Kjør denne for å hoste den lokalt på nettet og ikke bare på datamaskinen

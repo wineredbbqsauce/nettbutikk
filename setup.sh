@@ -72,15 +72,18 @@ fi
 
 # Finn app.py
 
-if [ -f "app.py" ]; then
-    APP_DIR="."
-else
+if [ ! -f "app.py" ]; then
     echo ""
     echo -e "  ${RED}✗ FEIL: Finner ikke app.py${NC}"
-    echo -e "    ${CYAN}Sjekk at setup.sh ligger i rotmappen til prosjektet.${NC}"
+    echo -e "  ${CYAN}Sjekk at setup.sh ligger i rotmappen til prosjektet.${NC}"
     deactivate
     exit 1
 fi
+
+sed -i 's/    app.run(debug=True)/    # app.run(debug=True)/' app.py
+sed -i 's/    # app.run(host="0.0.0.0", port=5000)/    app.run(host="0.0.0.0", port=5000)/' app.py
+echo ""
+echo -e "${GREEN}✓ Configured app.py for LAN hosting${NC}"
 
 echo ""
 echo -e "${GREEN}========================================"
@@ -90,8 +93,6 @@ echo -e "  Stopp serveren:     CTRL+C"
 echo -e "========================================${NC}"
 echo ""
 
-cd "$APP_DIR"
-export FLASK_APP="app.py"
-export FLASK_ENV=development
 
-python -m flask run --host=0.0.0.0 --port="$PORT"
+
+python app.py

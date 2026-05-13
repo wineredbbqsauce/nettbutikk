@@ -183,7 +183,31 @@ pip install -r requirements.txt
 
 If pip does not work, or you do not have pip installed (which you should concidering this used python), install pip or figure out the problem. It's really not that hard
 
-## 4. Start the server
+## 4. Change the app.py
+
+The server auto comes with `app.py(debug=True)`, this is only works locally and not over LAN
+
+Change the bottom of [app.py](app.py) from:
+
+```python
+app.run(debug=True)
+
+# app.run(host="0.0.0.0", port=5000)
+```
+
+**TO**:
+
+```python
+# app.run(debug=True)
+
+app.run(host="0.0.0.0", port=5000)
+```
+
+Feel free to delete `app.py(debug=True)`
+
+> **Note**: If you are using `setup.sh`, this is done automatically.
+
+## 5. Start the server
 
 ```bash
 python app.py
