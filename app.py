@@ -260,6 +260,10 @@ def about_us():
 def contact_page():
     return render_template("contact.html")
 
+@app.route("/settings")
+def settings_page():
+    return render_template("settings.html")
+    
 @app.route("/api/products")
 def get_products():
     db = get_db()
