@@ -271,7 +271,7 @@ This project is still evolving. Here are some planned improvements and features:
 
 Keep in mind that this project is under construction and it is not fully done
 
-If things break or doens't work as they should, womp womp - ask [Google](https://google.com), not me.
+If things break or doesn't work as they should, womp womp - ask [Google](https://google.com), not me.
 
 I will try to update the project as much as i can, but i do also have a life, so i cannot (and will not) update this as it's suits you.
 
