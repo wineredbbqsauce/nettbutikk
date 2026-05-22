@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings — Section</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.cdnfonts.com/css/raqillas" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="icon" type="image/png" href="/static/assets/logo.png" />
+    <link rel="stylesheet" href="/static/css/settings.css" />
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header>
+      <div class="logo">
+        <img src="/static/assets/logo.png" alt="" />
+        <span>Section</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/about-us">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <div class="search-bar">
+          <input type="text" placeholder="Search..." />
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="cart-icon" id="cart-toggle">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-count">0</span>
+        </div>
+        <div class="login-btn">
+          <a href="/login"><i class="fa-solid fa-user"></i></a>
+        </div>
+      </div>
+    </header>
+
+    <main class="settings-wrapper">
+      <!-- STICKY SIDEBAR -->
+      <aside class="settings-sidebar">
+        <div class="user-card">
+          <div class="user-avatar" id="avatar-circle">JD</div>
+          <div class="user-info">
+            <h3 id="sidebar-name">John Doe</h3>
+            <p id="sidebar-email">john@example.com</p>
+          </div>
+        </div>
+        <nav class="side-nav">
+          <a class="side-nav-item" href="#section-profile"
+            ><i class="fas fa-user"></i><span>Profile</span></a
+          >
+          <a class="side-nav-item" href="#section-orders"
+            ><i class="fas fa-box-open"></i><span>Orders</span></a
+          >
+          <a class="side-nav-item" href="#section-notifications"
+            ><i class="fas fa-bell"></i><span>Notifications</span></a
+          >
+          <a class="side-nav-item" href="#section-security"
+            ><i class="fas fa-shield-alt"></i><span>Security</span></a
+          >
+          <div class="side-nav-divider"></div>
+          <a class="side-nav-item danger" href="#section-danger"
+            ><i class="fas fa-skull"></i><span>Danger Zone</span></a
+          >
+        </nav>
+      </aside>
+
+      <!-- ALL SECTIONS -->
+      <div class="settings-content">
+        <!-- PROFILE -->
+        <section class="settings-section" id="section-profile">
+          <div class="section-heading">
+            <span class="section-label">MY ACCOUNT</span>
+            <h2>Profile</h2>
+          </div>
+
+          <div class="card">
+            <div class="avatar-row">
+              <div class="avatar-large" id="avatar-large">JD</div>
+              <div>
+                <p class="avatar-name" id="avatar-display-name">John Doe</p>
+                <p class="avatar-since">Member since January 2024</p>
+                <label class="upload-btn">
+                  <i class="fas fa-camera"></i> Change photo
+                  <input type="file" accept="image/*" hidden />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Personal Details</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name</label>
+                <input
+                  type="text"
+                  id="first-name"
+                  value="John"
+                  placeholder="First name"
+                />
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input
+                  type="text"
+                  id="last-name"
+                  value="Doe"
+                  placeholder="Last name"
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="profile-email" value="john@example.com" />
+            </div>
+            <div class="form-group" style="margin-bottom: 0">
+              <label>Phone Number</label>
+              <input type="tel" placeholder="+47 000 00 000" />
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Shipping Address</h3>
+            <div class="form-group">
+              <label>Street Address</label>
+              <input type="text" placeholder="e.g. Storgata 1" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>City</label>
+                <input type="text" placeholder="Oslo" />
+              </div>
+              <div class="form-group">
+                <label>Postal Code</label>
+                <input type="text" placeholder="0001" />
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0">
+              <label>Country</label>
+              <select>
+                <option>Norway</option>
+                <option>Sweden</option>
+                <option>Denmark</option>
+                <option>Finland</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              class="btn-outline"
+              onclick="showToast('Changes discarded.', 'info')"
+            >
+              Discard
+            </button>
+            <button class="btn-primary" onclick="saveProfile()">
+              <i class="fas fa-check"></i> Save Changes
+            </button>
+          </div>
+        </section>
+
+        <!-- ORDERS -->
+        <section class="settings-section" id="section-orders">
+          <div class="section-heading">
+            <span class="section-label">PURCHASE HISTORY</span>
+            <h2>Orders</h2>
+          </div>
+
+          <div class="card">
+            <div class="order-row">
+              <div class="order-thumb"><i class="fas fa-tshirt"></i></div>
+              <div class="order-meta">
+                <h4>Premium Jacket — Black / M</h4>
+                <p>Order #SEC-00482 · 12 May 2026</p>
+              </div>
+              <div class="order-right">
+                <span class="badge badge-green">Delivered</span>
+                <strong>kr 1 299</strong>
+              </div>
+            </div>
+            <div class="order-row">
+              <div class="order-thumb"><i class="fas fa-shoe-prints"></i></div>
+              <div class="order-meta">
+                <h4>Canvas Sneakers — White / 42</h4>
+                <p>Order #SEC-00471 · 2 May 2026</p>
+              </div>
+              <div class="order-right">
+                <span class="badge badge-yellow">In Transit</span>
+                <strong>kr 899</strong>
+              </div>
+            </div>
+            <div class="order-row">
+              <div class="order-thumb"><i class="fas fa-glasses"></i></div>
+              <div class="order-meta">
+                <h4>Retro Sunglasses — Tortoise</h4>
+                <p>Order #SEC-00459 · 18 Apr 2026</p>
+              </div>
+              <div class="order-right">
+                <span class="badge badge-green">Delivered</span>
+                <strong>kr 549</strong>
+              </div>
+            </div>
+            <div
+              class="order-row"
+              style="border-bottom: none; padding-bottom: 0"
+            >
+              <div class="order-thumb"><i class="fas fa-hat-cowboy"></i></div>
+              <div class="order-meta">
+                <h4>Wool Bucket Hat — Cream</h4>
+                <p>Order #SEC-00441 · 3 Apr 2026</p>
+              </div>
+              <div class="order-right">
+                <span class="badge badge-green">Delivered</span>
+                <strong>kr 349</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <a href="/products" class="btn-outline"
+              ><i class="fas fa-shopping-bag"></i> Shop More</a
+            >
+          </div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section class="settings-section" id="section-notifications">
+          <div class="section-heading">
+            <span class="section-label">STAY IN THE LOOP</span>
+            <h2>Notifications</h2>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Email</h3>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <h4>Order Updates</h4>
+                <p>Shipping confirmations and delivery status</p>
+              </div>
+              <label class="toggle"
+                ><input type="checkbox" checked /><span class="track"></span
+              ></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <h4>New Arrivals</h4>
+                <p>Be first to see new products</p>
+              </div>
+              <label class="toggle"
+                ><input type="checkbox" checked /><span class="track"></span
+              ></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <h4>Promotions & Sales</h4>
+                <p>Exclusive discounts and seasonal deals</p>
+              </div>
+              <label class="toggle"
+                ><input type="checkbox" /><span class="track"></span
+              ></label>
+            </div>
+            <div
+              class="toggle-row"
+              style="border-bottom: none; padding-bottom: 0"
+            >
+              <div class="toggle-info">
+                <h4>Weekly Newsletter</h4>
+                <p>Curated picks and style inspiration</p>
+              </div>
+              <label class="toggle"
+                ><input type="checkbox" /><span class="track"></span
+              ></label>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">SMS</h3>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <h4>SMS Order Alerts</h4>
+                <p>Text messages for urgent delivery updates</p>
+              </div>
+              <label class="toggle"
+                ><input type="checkbox" checked /><span class="track"></span
+              ></label>
+            </div>
+            <div
+              class="toggle-row"
+              style="border-bottom: none; padding-bottom: 0"
+            >
+              <div class="toggle-info">
+                <h4>SMS Promotions</h4>
+                <p>Flash sales and limited offers via text</p>
+              </div>
+              <label class="toggle"
+                ><input type="checkbox" /><span class="track"></span
+              ></label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              class="btn-primary"
+              onclick="showToast('Notification preferences saved!')"
+            >
+              <i class="fas fa-check"></i> Save Preferences
+            </button>
+          </div>
+        </section>
+
+        <!-- SECURITY -->
+        <section class="settings-section" id="section-security">
+          <div class="section-heading">
+            <span class="section-label">ACCOUNT SECURITY</span>
+            <h2>Security</h2>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Change Password</h3>
+            <div class="form-group">
+              <label>Current Password</label>
+              <div class="input-icon-wrap">
+                <input
+                  type="password"
+                  id="current-pw"
+                  placeholder="Enter current password"
+                />
+                <i class="fas fa-eye toggle-pw" data-target="current-pw"></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <div class="input-icon-wrap">
+                <input
+                  type="password"
+                  id="new-pw"
+                  placeholder="Minimum 8 characters"
+                  oninput="checkStrength(this.value)"
+                />
+                <i class="fas fa-eye toggle-pw" data-target="new-pw"></i>
+              </div>
+              <div class="strength-bar">
+                <div class="strength-fill" id="strength-fill"></div>
+              </div>
+              <span class="hint" id="strength-label">Enter a password</span>
+            </div>
+            <div class="form-group" style="margin-bottom: 0">
+              <label>Confirm New Password</label>
+              <div class="input-icon-wrap">
+                <input
+                  type="password"
+                  id="confirm-pw"
+                  placeholder="Repeat new password"
+                />
+                <i class="fas fa-eye toggle-pw" data-target="confirm-pw"></i>
+              </div>
+            </div>
+            <div
+              class="form-actions"
+              style="
+                margin-top: 1.25rem;
+                padding-top: 1.25rem;
+                border-top: 1px solid var(--border-color);
+                justify-content: flex-start;
+              "
+            >
+              <button
+                class="btn-primary"
+                onclick="showToast('Password updated!')"
+              >
+                <i class="fas fa-shield-alt"></i> Update Password
+              </button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Active Sessions</h3>
+            <div class="session-row">
+              <div class="session-icon"><i class="fas fa-laptop"></i></div>
+              <div class="session-info">
+                <h4>MacBook Pro — Chrome</h4>
+                <p>Oslo, Norway · Active now</p>
+              </div>
+              <span class="badge badge-green">Current</span>
+            </div>
+            <div
+              class="session-row"
+              style="border-bottom: none; padding-bottom: 0"
+            >
+              <div class="session-icon"><i class="fas fa-mobile-alt"></i></div>
+              <div class="session-info">
+                <h4>iPhone — Safari</h4>
+                <p>Oslo, Norway · 2 hours ago</p>
+              </div>
+              <button
+                class="btn-outline btn-sm"
+                onclick="showToast('Session revoked.', 'info')"
+              >
+                Revoke
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- DANGER ZONE -->
+        <section class="settings-section" id="section-danger">
+          <div class="section-heading">
+            <span class="section-label" style="color: #e74c3c"
+              >CAREFUL NOW</span
+            >
+            <h2>Danger Zone</h2>
+          </div>
+
+          <div class="card card-danger">
+            <div class="danger-row">
+              <div class="danger-info">
+                <h4><i class="fas fa-download"></i> Export My Data</h4>
+                <p>
+                  Download all your account data and order history as a ZIP
+                  archive.
+                </p>
+              </div>
+              <button
+                class="btn-outline"
+                onclick="
+                  showToast('Export started — check your email.', 'info')
+                "
+              >
+                Export
+              </button>
+            </div>
+            <div class="danger-row">
+              <div class="danger-info">
+                <h4><i class="fas fa-pause-circle"></i> Deactivate Account</h4>
+                <p>
+                  Temporarily disable your account. You can reactivate it
+                  anytime by logging in.
+                </p>
+              </div>
+              <button class="btn-danger" onclick="confirmDanger('deactivate')">
+                Deactivate
+              </button>
+            </div>
+            <div
+              class="danger-row"
+              style="border-bottom: none; padding-bottom: 0"
+            >
+              <div class="danger-info">
+                <h4><i class="fas fa-trash-alt"></i> Delete Account</h4>
+                <p>
+                  Permanently erase your account and all data. This
+                  <strong>cannot</strong> be undone.
+                </p>
+              </div>
+              <button
+                class="btn-danger btn-danger-solid"
+                onclick="confirmDanger('delete')"
+              >
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+      <!-- end settings-content -->
+    </main>
+
+    <div class="toast" id="toast">
+      <i class="fas fa-check-circle toast-icon" id="toast-icon"></i>
+      <span id="toast-msg">Saved!</span>
+    </div>
+
+    <script src="/static/js/cart.js"></script>
+    <script src="/static/js/transitions.js"></script>
+    <script>
+      /* ── ACTIVE NAV ON SCROLL ── */
+      const sections = document.querySelectorAll(".settings-section");
+      const navLinks = document.querySelectorAll(".side-nav-item");
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const id = entry.target.id;
+              navLinks.forEach((a) => {
+                a.classList.toggle(
+                  "active",
+                  a.getAttribute("href") === "#" + id,
+                );
+              });
+            }
+          });
+        },
+        { rootMargin: "-30% 0px -60% 0px" },
+      );
+
+      sections.forEach((s) => observer.observe(s));
+
+      /* ── SMOOTH SCROLL (offset for fixed header) ── */
+      document.querySelectorAll(".side-nav-item").forEach((a) => {
+        a.addEventListener("click", (e) => {
+          e.preventDefault();
+          const target = document.querySelector(a.getAttribute("href"));
+          if (target) {
+            const top =
+              target.getBoundingClientRect().top + window.scrollY - 90;
+            window.scrollTo({ top, behavior: "smooth" });
+          }
+        });
+      });
+
+      /* ── PROFILE SAVE ── */
+      function saveProfile() {
+        const first = document.getElementById("first-name").value.trim();
+        const last = document.getElementById("last-name").value.trim();
+        const email = document.getElementById("profile-email").value.trim();
+        const name = (first + " " + last).trim() || "User";
+        const initials =
+          ((first[0] || "") + (last[0] || "")).toUpperCase() || "JD";
+        document.getElementById("avatar-circle").textContent = initials;
+        document.getElementById("avatar-large").textContent = initials;
+        document.getElementById("avatar-display-name").textContent = name;
+        document.getElementById("sidebar-name").textContent = name;
+        document.getElementById("sidebar-email").textContent = email;
+        showToast("Profile saved!");
+      }
+
+      /* ── PASSWORD STRENGTH ── */
+      function checkStrength(val) {
+        const fill = document.getElementById("strength-fill");
+        const label = document.getElementById("strength-label");
+        if (!val) {
+          fill.style.width = "0";
+          label.textContent = "Enter a password";
+          return;
+        }
+        let s = 0;
+        if (val.length >= 8) s++;
+        if (/[A-Z]/.test(val)) s++;
+        if (/[0-9]/.test(val)) s++;
+        if (/[^A-Za-z0-9]/.test(val)) s++;
+        const colors = ["#e74c3c", "#f39c12", "#3498db", "#2ecc71"];
+        const labels = ["Weak", "Fair", "Good", "Strong"];
+        fill.style.width = s * 25 + "%";
+        fill.style.background = colors[s - 1] || "#e74c3c";
+        label.textContent = "Strength: " + (labels[s - 1] || "Very Weak");
+      }
+
+      /* ── TOGGLE PASSWORD VISIBILITY ── */
+      document.querySelectorAll(".toggle-pw").forEach((icon) => {
+        icon.addEventListener("click", () => {
+          const input = document.getElementById(icon.dataset.target);
+          input.type = input.type === "password" ? "text" : "password";
+          icon.classList.toggle("fa-eye");
+          icon.classList.toggle("fa-eye-slash");
+        });
+      });
+
+      /* ── DANGER CONFIRM ── */
+      function confirmDanger(type) {
+        const msg =
+          type === "delete"
+            ? "Permanently delete your account? This cannot be undone."
+            : "Deactivate your account?";
+        if (confirm(msg))
+          showToast(
+            type === "delete" ? "Deletion requested." : "Account deactivated.",
+            "info",
+          );
+      }
+
+      /* ── TOAST ── */
+      let toastTimer;
+      function showToast(msg, type = "success") {
+        const toast = document.getElementById("toast");
+        document.getElementById("toast-msg").textContent = msg;
+        document.getElementById("toast-icon").className =
+          "toast-icon fas " +
+          (type === "info" ? "fa-info-circle" : "fa-check-circle");
+        toast.className = "toast show " + type;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 3000);
+      }
+
+      /* ── HEADER SEARCH ── */
+      const navSearch = document.querySelector(".search-bar input");
+      document
+        .querySelector(".search-bar .fa-search")
+        .addEventListener("click", () => {
+          if (navSearch.value.trim())
+            window.location.href = `/products?search=${encodeURIComponent(navSearch.value.trim())}`;
+        });
+      navSearch.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && navSearch.value.trim())
+          window.location.href = `/products?search=${encodeURIComponent(navSearch.value.trim())}`;
+      });
+    </script>
+  </body>
+</html>

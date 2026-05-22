@@ -210,9 +210,7 @@ nav a.active::after {
 
   border-radius: 50%;
 
-  background: radial-gradient(circle,
-      rgba(0, 123, 255, 0.18),
-      transparent 70%);
+  background: radial-gradient(circle, rgba(0, 123, 255, 0.18), transparent 70%);
 
   filter: blur(5px);
 
@@ -493,6 +491,93 @@ nav a.active::after {
   text-decoration: none;
 
   font-weight: 600;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #888888;
+  font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 2px solid #c7c7c7;
+}
+
+.divider:not(:empty)::before {
+  margin-right: 10px;
+}
+
+.divider:not(:empty)::after {
+  margin-left: 10px;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Base-stil for begge knappene */
+.social-btn {
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.65rem 1.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Gir perfekt avstand mellom ikon og tekst */
+  flex: 1; /* Gjør begge knappene nøyaktig like brede */
+  max-width: 180px; /* Hindrer knappene i å bli for brede på store skjermer */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+/* Google Spesifikk Stil */
+.social-btn-google {
+  background-color: #ffffff;
+  color: #444444;
+  border: 1px solid #e4e4e4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.social-btn-google i {
+  color: #ea4335; /* Offisiell Google rød farge for ikonet */
+}
+
+.social-btn-google:hover {
+  background-color: #f9f9f9;
+  border-color: #cccccc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Apple Spesifikk Stil */
+.social-btn-apple {
+  background-color: #000000; /* Offisiell helsort Apple-look */
+  color: #ffffff;
+  border: 1px solid #000000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.social-btn-apple:hover {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Klikk-effekt for begge */
+.social-btn:active {
+  transform: translateY(0);
 }
 
 /* ========================
