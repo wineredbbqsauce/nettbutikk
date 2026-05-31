@@ -674,7 +674,11 @@ nav a.active::after {
   box-shadow: 0 0 15px rgba(255, 107, 157, 0.2);
 }
 
-/* ====== FOOTER ====== */
+/* 
+========================
+        FOOTER
+======================== 
+*/
 .footer {
   background: var(--text-primary);
   color: white;

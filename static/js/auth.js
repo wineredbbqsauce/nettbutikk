@@ -180,3 +180,126 @@ document.addEventListener("DOMContentLoaded", () => {
     navSearchBtn.addEventListener("click", goToSearch);
   }
 });
+
+// ====== SETTINGS ======
+
+// static/js/auth.js (legg til disse funksjonene)
+
+// Sjekk om bruker er logget inn - for settings-beskyttelse
+function requireAuth() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    showMessage("Please log in to access settings.", "error");
+    sessionStorage.setItem("redirectAfterLogin", window.location.pathname);
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 1500);
+    return null;
+  }
+
+  return user;
+}
+
+// Hent innlogget bruker
+function getCurrentUser() {
+  return JSON.parse(localStorage.getItem("user"));
+}
+
+// Oppdater hele settings-siden med brukerdata
+function updateSettingsPage(user) {
+  if (!user) return;
+
+  const firstName = user.firstName || "";
+  const lastName = user.lastName || "";
+  const fullName = `${firstName} ${lastName}`.trim() || "User";
+  const initials =
+    ((firstName[0] || "") + (lastName[0] || "")).toUpperCase() || "U";
+  const email = user.email || "";
+
+  // Oppdater sidebar
+  const sidebarName = document.getElementById("sidebar-name");
+  const sidebarEmail = document.getElementById("sidebar-email");
+  const avatarCircle = document.getElementById("avatar-circle");
+
+  if (sidebarName) sidebarName.textContent = fullName;
+  if (sidebarEmail) sidebarEmail.textContent = email;
+  if (avatarCircle) avatarCircle.textContent = initials;
+
+  // Oppdater profilseksjonen
+  const avatarLarge = document.getElementById("avatar-large");
+  const avatarDisplayName = document.getElementById("avatar-display-name");
+  const avatarSince = document.querySelector(".avatar-since");
+  const firstNameInput = document.getElementById("first-name");
+  const lastNameInput = document.getElementById("last-name");
+  const emailInput = document.getElementById("profile-email");
+
+  if (avatarLarge) avatarLarge.textContent = initials;
+  if (avatarDisplayName) avatarDisplayName.textContent = fullName;
+  if (firstNameInput) firstNameInput.value = firstName;
+  if (lastNameInput) lastNameInput.value = lastName;
+  if (emailInput) emailInput.value = email;
+
+  // Hvis brukeren har joinDate i data
+  if (user.joinDate && avatarSince) {
+    const date = new Date(user.joinDate);
+    const options = { month: "long", year: "numeric" };
+    avatarSince.textContent = `Member since ${date.toLocaleDateString("en-US", options)}`;
+  }
+}
+
+// Oppdatert saveProfile for å sende data til server
+async function saveProfile() {
+  const user = getCurrentUser();
+  if (!user) return;
+
+  const firstName = document.getElementById("first-name").value.trim();
+  const lastName = document.getElementById("last-name").value.trim();
+  const email = document.getElementById("profile-email").value.trim();
+
+  try {
+    const res = await fetch(`${API_URL}/update-profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token || ""}`,
+      },
+      body: JSON.stringify({ firstName, lastName, email }),
+    });
+
+    if (res.ok) {
+      const updatedUser = await res.json();
+      localStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser }));
+      updateSettingsPage({ ...user, ...updatedUser });
+      showMessage("Profile updated successfully!", "success");
+    } else {
+      const data = await res.json();
+      showMessage(data.error || "Failed to update profile.", "error");
+    }
+  } catch (err) {
+    showMessage("Something went wrong. Please try again.", "error");
+    console.error(err);
+  }
+}
+
+// Legg til logout-knapp i settings
+function addLogoutToSettings() {
+  const sidebar = document.querySelector(".side-nav");
+  if (!sidebar) return;
+
+  const divider = document.createElement("div");
+  divider.className = "side-nav-divider";
+
+  const logoutLink = document.createElement("a");
+  logoutLink.className = "side-nav-item";
+  logoutLink.href = "#";
+  logoutLink.innerHTML =
+    '<i class="fas fa-sign-out-alt"></i><span>Logout</span>';
+  logoutLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    logout();
+  });
+
+  sidebar.appendChild(divider);
+  sidebar.appendChild(logoutLink);
+}

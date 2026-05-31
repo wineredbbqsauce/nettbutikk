@@ -486,7 +486,21 @@
 
     <script src="/static/js/cart.js"></script>
     <script src="/static/js/transitions.js"></script>
+    <script src="/static/js/auth.js"></script>
     <script>
+      // Kjør autentisering med en gang obvs
+      document.addEventListener("DOMContentLoaded", function () {
+        const user = requireAuth();
+
+        if (!user) return;
+
+        updateSettingsPage(user);
+        addLogoutToSettings();
+
+        const wrapper = document.querySelector(".settings-wrapper");
+        if (wrapper) wrapper.style.display = "";
+      });
+
       /* ── ACTIVE NAV ON SCROLL ── */
       const sections = document.querySelectorAll(".settings-section");
       const navLinks = document.querySelectorAll(".side-nav-item");

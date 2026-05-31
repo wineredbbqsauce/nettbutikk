@@ -547,17 +547,58 @@ nav a.active::after {
     padding: 0 1.5rem 1.2rem;
 }
 
-/* ========================
-         FOOTER
-      ======================== */
+/* 
+========================
+        FOOTER
+======================== 
+*/
+.footer {
+    background: var(--text-color);
+    color: white;
+    padding: 3rem 2rem 1rem;
+}
 
-footer {
-    background: var(--surface-color);
-    border-top: 1px solid var(--border-color);
-    padding: 2rem;
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.footer-section p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.footer-section a {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    transition: 0.3s;
+}
+
+.footer-section a:hover {
+    color: var(--accent);
+}
+
+.footer-bottom {
     text-align: center;
-    font-size: 13px;
-    color: var(--secondary-color);
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
 }
 
 /* ========================
