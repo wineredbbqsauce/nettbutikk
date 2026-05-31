@@ -82,6 +82,11 @@ const Cart = {
     const total = items.reduce((sum, i) => sum + i.quantity, 0);
     document.querySelectorAll(".cart-count").forEach((badge) => {
       badge.textContent = total;
+      if (total > 0) {
+        badge.classList.add("visible");
+      } else {
+        badge.classList.remove("visible");
+      }
     });
   },
 
