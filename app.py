@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, g, request, session
+from flask import Flask, jsonify, redirect, render_template, g, request, session
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import sqlite3
@@ -117,7 +117,17 @@ def login():
     if user:
         session["user_id"] = user["id"]
         session["email"] = user["email"]
-        return jsonify({"success": True, "message": "Logged in successfully", "user": {"id": user["id"], "email": user["email"]}}), 200
+        return jsonify({
+            "success": True, 
+            "message": 
+            "Logged in successfully", 
+            "user": {
+                "id": user["id"],
+                "firstname": user["firstname"],
+                "lastname": user["lastname"],
+                "email": user["email"]
+            }
+        }), 200
     else:
         return jsonify({"error": "Invalid email or password"}), 401
 
@@ -137,6 +147,25 @@ def get_current_user():
         return jsonify({"error": "User not found"}), 404
     return jsonify({"error": "Not authenticated"}), 401
 
+@app.route("/api/auth/delete", methods=["POST"])
+def delete_account():
+    if "user_id" not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    user_id = session["user_id"]
+
+    # slett cart først (forgein key)
+    db = get_db()
+    db.execute("DELETE FROM cart WHERE user_id = ?", (user_id,))
+    db.commit()
+
+    import sqlite3 as _sqlite3
+    with _sqlite3.connect("users.db") as conn:
+        conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        conn.commit()
+    
+    session.clear()
+    return jsonify({"success": True, "message": "Account deleted successfully"}), 200
 
 # ============
 #    CART
@@ -262,6 +291,8 @@ def contact_page():
 
 @app.route("/settings")
 def settings_page():
+    if "user_id" not in session:
+        return redirect("/login")
     return render_template("settings.html")
     
 @app.route("/api/products")

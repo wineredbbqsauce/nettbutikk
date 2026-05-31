@@ -76,11 +76,30 @@ async function handleRegister(e) {
 
     const data = await res.json();
 
-    if (res.ok) {
-      showMessage("Account created! Redirecting to login...", "success");
-      setTimeout(() => (window.location.href = "/login"), 2000);
-    } else {
+    if (!res.ok) {
       showMessage(data.error || "Registration failed.", "error");
+      return;
+    }
+
+    const loginRes = await fetch(`${API_URL}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (loginRes.ok) {
+      const meRes = await fetch("/api/auth/me");
+      const meData = await meRes.json();
+      localStorage.setItem("user", JSON.stringify(meData));
+
+      showMessage("Account created! Redirecting...", "success");
+      setTimeout(() => (window.location.href = "/"), 1500);
+    } else {
+      showMessage(
+        "Registration succeeded but login failed. Please try logging in.",
+        "error",
+      );
+      setTimeout(() => (window.location.href = "/login"), 1500);
     }
   } catch (err) {
     showMessage("Something went wrong. Try again.", "error");
@@ -111,7 +130,10 @@ async function handleLogin(e) {
     const data = await res.json();
 
     if (res.ok) {
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const meRes = await fetch("/api/auth/me");
+      const meData = await meRes.json();
+      localStorage.setItem("user", JSON.stringify(meData));
+
       showMessage("Logged in! Redirecting...", "success");
       setTimeout(() => (window.location.href = "/"), 1500);
     } else {
@@ -210,8 +232,8 @@ function getCurrentUser() {
 function updateSettingsPage(user) {
   if (!user) return;
 
-  const firstName = user.firstName || "";
-  const lastName = user.lastName || "";
+  const firstName = user.firstname || "";
+  const lastName = user.lastname || "";
   const fullName = `${firstName} ${lastName}`.trim() || "User";
   const initials =
     ((firstName[0] || "") + (lastName[0] || "")).toUpperCase() || "U";
@@ -302,4 +324,21 @@ function addLogoutToSettings() {
 
   sidebar.appendChild(divider);
   sidebar.appendChild(logoutLink);
+}
+
+async function deleteAccount() {
+  try {
+    const res = await fetch("/api/auth/delete", { method: "POST" });
+    if (res.ok) {
+      localStorage.removeItem("user");
+      showMessage("Account deleted. Redirecting...", "success");
+      setTimeout(() => (window.location.href = "/"), 2000);
+    } else {
+      const data = await res.json();
+      showMessage(data.error || "Failed to delete account.", "error");
+    }
+  } catch (err) {
+    showMessage("Something went wrong. Please try again.", "error");
+    console.error(err);
+  }
 }

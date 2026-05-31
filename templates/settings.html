@@ -485,10 +485,32 @@
     </div>
 
     <script src="/static/js/cart.js"></script>
-    <script src="/static/js/transitions.js"></script>
+    <!-- <script src="/static/js/transitions.js"></script> -->
     <script src="/static/js/auth.js"></script>
     <script>
       // Kjør autentisering med en gang obvs
+      (function () {
+        fetch("/api/auth/me")
+          .then((res) => {
+            if (!res.ok) {
+              window.location.href = "/login";
+              return null;
+            }
+            return res.json();
+          })
+          .then((data) => {
+            if (!data) return;
+            document.body.style.visibility = "visible";
+            // Oppdater brukerdata i localStorage
+            if (typeof updateSettingsPage === "function") {
+              updateSettingsPage(data.user);
+              addLogoutToSettings();
+            }
+          })
+          .catch(() => (window.location.href = "/login"));
+      })();
+
+      /* // Kjør autentisering med en gang obvs
       document.addEventListener("DOMContentLoaded", function () {
         const user = requireAuth();
 
@@ -499,7 +521,7 @@
 
         const wrapper = document.querySelector(".settings-wrapper");
         if (wrapper) wrapper.style.display = "";
-      });
+      }); */
 
       /* ── ACTIVE NAV ON SCROLL ── */
       const sections = document.querySelectorAll(".settings-section");
@@ -586,15 +608,15 @@
 
       /* ── DANGER CONFIRM ── */
       function confirmDanger(type) {
-        const msg =
-          type === "delete"
-            ? "Permanently delete your account? This cannot be undone."
-            : "Deactivate your account?";
-        if (confirm(msg))
-          showToast(
-            type === "delete" ? "Deletion requested." : "Account deactivated.",
-            "info",
+        if (type === "delete") {
+          const confirmed = confirm(
+            "⚠️ This will permanently delete your account and all data. This can NOT be undone\n\nAre you completely sure?",
           );
+          if (confirmed) deleteAccount();
+        } else {
+          if (confirm("Deactivate your account?"))
+            showToast("Account deactivated.", "info");
+        }
       }
 
       /* ── TOAST ── */
@@ -622,6 +644,14 @@
         if (e.key === "Enter" && navSearch.value.trim())
           window.location.href = `/products?search=${encodeURIComponent(navSearch.value.trim())}`;
       });
+
+      // document.addEventListener("DOMContentLoaded", function () {
+      //   const user = JSON.parse(localStorage.getItem("user"));
+      //   if (user) {
+      //     updateSettingsPage(user);
+      //     addLogoutToSettings();
+      //   }
+      // });
     </script>
   </body>
 </html>
