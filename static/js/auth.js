@@ -45,9 +45,6 @@ async function handleRegister(e) {
 
   const firstName = getFormValue("first-name");
   const lastName = getFormValue("last-name");
-  // const username =
-  //   (firstName + lastName).toLowerCase().replace(/\s/g, "") ||
-  //   getFormValue("username");
   const email = getFormValue("email");
   const password = getFormValue("password");
   const confirmPassword = getFormValue("confirmPassword");
@@ -90,7 +87,7 @@ async function handleRegister(e) {
     if (loginRes.ok) {
       const meRes = await fetch("/api/auth/me");
       const meData = await meRes.json();
-      localStorage.setItem("user", JSON.stringify(meData));
+      localStorage.setItem("user", JSON.stringify(meData.user || meData));
 
       showMessage("Account created! Redirecting...", "success");
       setTimeout(() => (window.location.href = "/"), 1500);
@@ -132,7 +129,7 @@ async function handleLogin(e) {
     if (res.ok) {
       const meRes = await fetch("/api/auth/me");
       const meData = await meRes.json();
-      localStorage.setItem("user", JSON.stringify(meData));
+      localStorage.setItem("user", JSON.stringify(meData.user || meData));
 
       showMessage("Logged in! Redirecting...", "success");
       setTimeout(() => (window.location.href = "/"), 1500);
@@ -205,30 +202,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ====== SETTINGS ======
 
-// static/js/auth.js (legg til disse funksjonene)
-
-// Sjekk om bruker er logget inn - for settings-beskyttelse
-function requireAuth() {
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (!user) {
-    showMessage("Please log in to access settings.", "error");
-    sessionStorage.setItem("redirectAfterLogin", window.location.pathname);
-    setTimeout(() => {
-      window.location.href = "/login";
-    }, 1500);
-    return null;
-  }
-
-  return user;
-}
-
-// Hent innlogget bruker
+// Hent innlogget bruker fra localStorage (oppdateres fra server)
 function getCurrentUser() {
   return JSON.parse(localStorage.getItem("user"));
 }
 
-// Oppdater hele settings-siden med brukerdata
+// Oppdater hele settings‑siden med brukerdata
 function updateSettingsPage(user) {
   if (!user) return;
 
@@ -239,19 +218,17 @@ function updateSettingsPage(user) {
     ((firstName[0] || "") + (lastName[0] || "")).toUpperCase() || "U";
   const email = user.email || "";
 
-  // Oppdater sidebar
+  // Sidebar
   const sidebarName = document.getElementById("sidebar-name");
   const sidebarEmail = document.getElementById("sidebar-email");
   const avatarCircle = document.getElementById("avatar-circle");
-
   if (sidebarName) sidebarName.textContent = fullName;
   if (sidebarEmail) sidebarEmail.textContent = email;
   if (avatarCircle) avatarCircle.textContent = initials;
 
-  // Oppdater profilseksjonen
+  // Profilseksjon
   const avatarLarge = document.getElementById("avatar-large");
   const avatarDisplayName = document.getElementById("avatar-display-name");
-  const avatarSince = document.querySelector(".avatar-since");
   const firstNameInput = document.getElementById("first-name");
   const lastNameInput = document.getElementById("last-name");
   const emailInput = document.getElementById("profile-email");
@@ -261,19 +238,15 @@ function updateSettingsPage(user) {
   if (firstNameInput) firstNameInput.value = firstName;
   if (lastNameInput) lastNameInput.value = lastName;
   if (emailInput) emailInput.value = email;
-
-  // Hvis brukeren har joinDate i data
-  if (user.joinDate && avatarSince) {
-    const date = new Date(user.joinDate);
-    const options = { month: "long", year: "numeric" };
-    avatarSince.textContent = `Member since ${date.toLocaleDateString("en-US", options)}`;
-  }
 }
 
-// Oppdatert saveProfile for å sende data til server
+// Lagre profil (sender til server)
 async function saveProfile() {
   const user = getCurrentUser();
-  if (!user) return;
+  if (!user) {
+    showToast?.("Not logged in.", "error") || alert("Not logged in.");
+    return;
+  }
 
   const firstName = document.getElementById("first-name").value.trim();
   const lastName = document.getElementById("last-name").value.trim();
@@ -282,29 +255,86 @@ async function saveProfile() {
   try {
     const res = await fetch(`${API_URL}/update-profile`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token || ""}`,
-      },
+      headers: { "Content-Type": "application/json" },
+      // Siden vi bruker sessions (cookies) trenger vi ingen Authorization‑header
       body: JSON.stringify({ firstName, lastName, email }),
     });
 
-    if (res.ok) {
-      const updatedUser = await res.json();
-      localStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser }));
-      updateSettingsPage({ ...user, ...updatedUser });
-      showMessage("Profile updated successfully!", "success");
-    } else {
-      const data = await res.json();
-      showMessage(data.error || "Failed to update profile.", "error");
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast?.(data.error || "Update failed.", "error");
+      return;
     }
+
+    // Oppdater localStorage og UI
+    const updatedUser = {
+      ...user,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      email: data.email,
+    };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    updateSettingsPage(updatedUser);
+
+    showToast?.("Profile saved!", "success");
   } catch (err) {
-    showMessage("Something went wrong. Please try again.", "error");
     console.error(err);
+    showToast?.("Something went wrong.", "error");
   }
 }
 
-// Legg til logout-knapp i settings
+// Bytt passord (sender til server)
+async function updatePassword() {
+  const currentPw = document.getElementById("current-pw").value.trim();
+  const newPw = document.getElementById("new-pw").value.trim();
+  const confirmPw = document.getElementById("confirm-pw").value.trim();
+
+  if (!currentPw || !newPw || !confirmPw) {
+    showToast?.("All password fields are required.", "error");
+    return;
+  }
+  if (newPw !== confirmPw) {
+    showToast?.("Passwords do not match.", "error");
+    return;
+  }
+  if (newPw.length < 6) {
+    showToast?.("Password must be at least 6 characters.", "error");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/change-password`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast?.(data.error || "Password change failed.", "error");
+      return;
+    }
+
+    // Tøm feltene
+    document.getElementById("current-pw").value = "";
+    document.getElementById("new-pw").value = "";
+    document.getElementById("confirm-pw").value = "";
+    // Styrkebaren nullstilles
+    const fill = document.getElementById("strength-fill");
+    if (fill) fill.style.width = "0";
+    const label = document.getElementById("strength-label");
+    if (label) label.textContent = "Enter a password";
+
+    showToast?.("Password updated!", "success");
+  } catch (err) {
+    console.error(err);
+    showToast?.("Something went wrong.", "error");
+  }
+}
+
+// Legg til logout‑knapp i sidebaren (kalles fra settings.html)
 function addLogoutToSettings() {
   const sidebar = document.querySelector(".side-nav");
   if (!sidebar) return;
@@ -326,19 +356,20 @@ function addLogoutToSettings() {
   sidebar.appendChild(logoutLink);
 }
 
+// Slett konto
 async function deleteAccount() {
   try {
     const res = await fetch("/api/auth/delete", { method: "POST" });
     if (res.ok) {
       localStorage.removeItem("user");
-      showMessage("Account deleted. Redirecting...", "success");
+      showToast?.("Account deleted. Redirecting...", "success");
       setTimeout(() => (window.location.href = "/"), 2000);
     } else {
       const data = await res.json();
-      showMessage(data.error || "Failed to delete account.", "error");
+      showToast?.(data.error || "Failed to delete account.", "error");
     }
   } catch (err) {
-    showMessage("Something went wrong. Please try again.", "error");
     console.error(err);
+    showToast?.("Something went wrong.", "error");
   }
 }

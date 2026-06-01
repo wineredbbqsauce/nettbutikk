@@ -387,10 +387,7 @@
                 justify-content: flex-start;
               "
             >
-              <button
-                class="btn-primary"
-                onclick="showToast('Password updated!')"
-              >
+              <button class="btn-primary" onclick="updatePassword()">
                 <i class="fas fa-shield-alt"></i> Update Password
               </button>
             </div>
@@ -554,20 +551,20 @@
       });
 
       /* ── PROFILE SAVE ── */
-      function saveProfile() {
-        const first = document.getElementById("first-name").value.trim();
-        const last = document.getElementById("last-name").value.trim();
-        const email = document.getElementById("profile-email").value.trim();
-        const name = (first + " " + last).trim() || "User";
-        const initials =
-          ((first[0] || "") + (last[0] || "")).toUpperCase() || "JD";
-        document.getElementById("avatar-circle").textContent = initials;
-        document.getElementById("avatar-large").textContent = initials;
-        document.getElementById("avatar-display-name").textContent = name;
-        document.getElementById("sidebar-name").textContent = name;
-        document.getElementById("sidebar-email").textContent = email;
-        showToast("Profile saved!");
-      }
+      // function saveProfile() {
+      //   const first = document.getElementById("first-name").value.trim();
+      //   const last = document.getElementById("last-name").value.trim();
+      //   const email = document.getElementById("profile-email").value.trim();
+      //   const name = (first + " " + last).trim() || "User";
+      //   const initials =
+      //     ((first[0] || "") + (last[0] || "")).toUpperCase() || "JD";
+      //   document.getElementById("avatar-circle").textContent = initials;
+      //   document.getElementById("avatar-large").textContent = initials;
+      //   document.getElementById("avatar-display-name").textContent = name;
+      //   document.getElementById("sidebar-name").textContent = name;
+      //   document.getElementById("sidebar-email").textContent = email;
+      //   showToast("Profile saved!");
+      // }
 
       /* ── PASSWORD STRENGTH ── */
       function checkStrength(val) {

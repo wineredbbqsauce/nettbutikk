@@ -5,7 +5,7 @@ import sqlite3
 import os
 import uuid
 from datetime import datetime, timedelta
-from auth import init_user_db, create_user, authenticate_user, get_user_by_email, get_user_by_id, login_required
+from auth import init_user_db, create_user, authenticate_user, get_user_by_email, get_user_by_id, login_required, verify_hashed_password, hashed_password, get_user_db
 
 app = Flask(__name__)
 CORS(app)
@@ -258,6 +258,76 @@ def cart_clear():
     db.execute("DELETE FROM cart WHERE user_id = ?", (session["user_id"],))
     db.commit()
     return jsonify({"success": True}), 200
+
+@app.route("/api/auth/update-profile", methods=["PUT"])
+def update_profile():
+    if "user_id" not in session:
+        return jsonify({ "error": "Authentication required"}), 401
+    
+    data = request.get_json()
+    firstname = data.get("firstName", "").strip()
+    lastname = data.get("lastName", "").strip()
+    email = data.get("email", "").strip()
+
+    if not firstname or not lastname or not email:
+        return jsonify({"error": "All fields are required"}), 400
+    
+    user_id = session["user_id"]
+
+    # Sjekk at epost ikke er i bruk av en annen bruker
+
+    conn = get_user_db()
+    existing = conn.execute(
+        "SELECT id FROM users WHERE email = ? AND id != ?", (email, user_id)
+    ).fetchone()
+    if existing:
+        conn.close()
+        return jsonify({"error": "Email already taken"}), 400
+    
+    conn.execute(
+        "UPDATE users SET firstname=?, lastname=?, email=? WHERE id=?",
+        (firstname, lastname, email, user_id)
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "firstname": firstname,
+        "lastname": lastname,
+        "email": email
+    }), 200
+
+
+@app.route("/api/auth/change-password", methods=["PUT"])
+def change_password():
+    if "user_id" not in session:
+        return jsonify({"error": "Authentication required"}), 401
+
+    data = request.get_json()
+    current_password = data.get("currentPassword", "").strip()
+    new_password = data.get("newPassword", "").strip()
+
+    if not current_password or not new_password:
+        return jsonify({"error": "Current and new password required"}), 400
+    if len(new_password) < 6:
+        return jsonify({"error": "New password must be at least 6 characters"}), 400
+
+    # verify current password
+    user = get_user_by_id(session["user_id"])
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    if not verify_hashed_password(current_password, user["password"]):
+        return jsonify({"error": "Current password is incorrect"}), 400
+
+    # hash new password and update
+    new_hash = hashed_password(new_password)
+    conn = get_user_db()
+    conn.execute("UPDATE users SET password = ? WHERE id = ?", (new_hash, user["id"]))
+    conn.commit()
+    conn.close()
+
+    return jsonify({"success": True, "message": "Password updated"}), 200
 
 # ============ 
 # 
