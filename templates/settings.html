@@ -25,6 +25,7 @@
         <img src="/static/assets/logo.png" alt="" />
         <span>Section</span>
       </div>
+
       <nav>
         <ul>
           <li><a href="/">Home</a></li>
@@ -33,6 +34,14 @@
           <li><a href="/contact">Contact Us</a></li>
         </ul>
       </nav>
+
+      <!-- Hamburger button (kun synlig på mobil) -->
+      <button class="hamburger" id="hamburger" aria-label="Åpne meny">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
       <div class="header-actions">
         <div class="search-bar">
           <input type="text" placeholder="Search..." />
@@ -485,7 +494,6 @@
     </div>
 
     <script src="/static/js/cart.js"></script>
-    <!-- <script src="/static/js/transitions.js"></script> -->
     <script src="/static/js/auth.js"></script>
     <script>
       // Kjør autentisering med en gang obvs
@@ -501,7 +509,6 @@
           .then((data) => {
             if (!data) return;
             document.body.style.visibility = "visible";
-            // Oppdater brukerdata i localStorage
             if (typeof updateSettingsPage === "function") {
               updateSettingsPage(data.user);
               addLogoutToSettings();
@@ -509,19 +516,6 @@
           })
           .catch(() => (window.location.href = "/login"));
       })();
-
-      /* // Kjør autentisering med en gang obvs
-      document.addEventListener("DOMContentLoaded", function () {
-        const user = requireAuth();
-
-        if (!user) return;
-
-        updateSettingsPage(user);
-        addLogoutToSettings();
-
-        const wrapper = document.querySelector(".settings-wrapper");
-        if (wrapper) wrapper.style.display = "";
-      }); */
 
       /* ── ACTIVE NAV ON SCROLL ── */
       const sections = document.querySelectorAll(".settings-section");
@@ -645,13 +639,23 @@
           window.location.href = `/products?search=${encodeURIComponent(navSearch.value.trim())}`;
       });
 
-      // document.addEventListener("DOMContentLoaded", function () {
-      //   const user = JSON.parse(localStorage.getItem("user"));
-      //   if (user) {
-      //     updateSettingsPage(user);
-      //     addLogoutToSettings();
-      //   }
-      // });
+      /* ═══════════════════════════════════════════
+         HAMBURGER MENY (ny!)
+         ═══════════════════════════════════════════ */
+      const hamburger = document.getElementById("hamburger");
+      const navMenu = document.querySelector("nav ul");
+
+      hamburger.addEventListener("click", () => {
+        hamburger.classList.toggle("open");
+        navMenu.classList.toggle("open");
+      });
+
+      navMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          hamburger.classList.remove("open");
+          navMenu.classList.remove("open");
+        });
+      });
     </script>
   </body>
 </html>

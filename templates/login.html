@@ -44,6 +44,11 @@
           <li><a href="/contact">Contact Us</a></li>
         </ul>
       </nav>
+      <button id="hamburger" class="hamburger" aria-label="Åpne Meny">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
       <div class="header-actions">
         <!-- Search Bar -->
@@ -190,6 +195,22 @@
     </footer>
 
     <script src="/static/js/auth.js"></script>
+    <script>
+      const hamburger = document.getElementById("hamburger");
+      const navMenu = document.querySelector("nav ul");
+
+      hamburger.addEventListener("click", () => {
+        hamburger.classList.toggle("open");
+        navMenu.classList.toggle("open");
+      });
+
+      navMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          hamburger.classList.remove("open");
+          navMenu.classList.remove("open");
+        });
+      });
+    </script>
   </body>
 </html>
 

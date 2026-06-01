@@ -33,7 +33,11 @@
           <li><a href="/contact">Contact Us</a></li>
         </ul>
       </nav>
-
+      <button class="hamburger" id="hamburger" aria-label="Åpne Meny">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <div class="header-actions">
         <!-- Search Bar -->
         <div class="search-bar">
@@ -232,6 +236,21 @@
       });
 
       navSearchBtn.addEventListener("click", goToSearch);
+
+      const hamburger = document.getElementById("hamburger");
+      const navMenu = document.querySelector("nav ul");
+      hamburger.addEventListener("click", () => {
+        hamburger.classList.toggle("open");
+        navMenu.classList.toggle("open");
+      });
+
+      // Lukk menyen ved klikk på lenke
+      navMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          hambuger.classList.remove("open");
+          navMenu.classList.remove("open");
+        });
+      });
     </script>
   </body>
 </html>

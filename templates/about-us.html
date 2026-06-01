@@ -17,7 +17,7 @@
     />
     <link href="https://fonts.cdnfonts.com/css/raqillas" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/static/assets/logo.png" />
-    <style>
+    <!-- <style>
       :root {
         --primary-color: #007bff;
         --secondary-color: #6c757d;
@@ -599,7 +599,7 @@
           max-width: 300px;
         }
       }
-    </style>
+    </style> -->
   </head>
   <body>
     <!-- Header -->
@@ -618,6 +618,11 @@
         </ul>
       </nav>
 
+      <button class="hamburger" id="hamburger" aria-label="Åpne meny">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <div class="header-actions">
         <div class="search-bar">
           <input type="text" placeholder="Search..." />
@@ -820,6 +825,22 @@
         if (e.key === "Enter") goToSearch();
       });
       navSearchBtn.addEventListener("click", goToSearch);
+
+      
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.querySelector("nav ul");
+
+  hamburger.addEventListener("click", () => {
+    hamburger.classList.toggle("open");
+    navMenu.classList.toggle("open");
+  });
+
+  navMenu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      hamburger.classList.remove("open");
+      navMenu.classList.remove("open");
+    });
+  });
     </script>
   </body>
 </html>
