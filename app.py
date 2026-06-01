@@ -6,6 +6,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from auth import init_user_db, create_user, authenticate_user, get_user_by_email, get_user_by_id, login_required, verify_hashed_password, hashed_password, get_user_db
+from seed_products import SEED_PRODUCTS
 
 app = Flask(__name__)
 CORS(app)
@@ -62,19 +63,8 @@ def init_db():
             "SELECT COUNT(*) FROM products"
         ).fetchone()[0] == 0:
             conn.executemany(
-                "INSERT INTO products VALUES (?,?,?,?,?)",
-                [
-                    (None, "Blue Sneakers", 49.99,
-                     "https://luksusbaby.no/cdn/shop/products/gsb480wh_2.jpg?v=1710449321&width=1214",
-                     "Comfortable everyday shoes!"),
-                    (None,"Leather Bag",89.99,
-                      "https://xcdn.next.co.uk/common/items/default/default/itemimages/3_4Ratio/product/lge/F02718s.jpg?im=Resize,width=750",
-                    "Genuine leather tote bag"),
-                    (None, "Placeholder", -10,
-                     "/static/assets/placeholder.png",
-                     "Let me - bitch"
-                    ),
-                ]
+                "INSERT INTO products (name, price, image_url, description) VALUES ( :name, :price, :image_url, :description)",
+                SEED_PRODUCTS
             )
         conn.commit()
 

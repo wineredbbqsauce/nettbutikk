@@ -40,14 +40,16 @@ main {
 ======================== */
 
 header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 2rem;
-  background: var(--surface-color);
-  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  background-color: var(--surface-color);
+  border-bottom: 1px solid var(--border-color);
   z-index: 999;
   gap: 1rem;
 }
@@ -58,9 +60,9 @@ header {
   align-items: center;
   font-size: 2rem;
   font-weight: 700;
-  flex-shrink: 0;
   text-decoration: none;
   color: var(--text-color);
+  flex-shrink: 0;
 }
 
 .logo span {
@@ -90,6 +92,7 @@ nav a {
 nav a:hover {
   color: var(--primary-color);
 }
+
 nav a.active {
   color: var(--text-color);
 }
@@ -127,9 +130,11 @@ nav a.active::after {
 .hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
+
 .hamburger.open span:nth-child(2) {
   opacity: 0;
 }
+
 .hamburger.open span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
@@ -442,9 +447,11 @@ nav a.active::after {
 .overlay-btn:hover {
   background: #f0f0f0;
 }
+
 .overlay-btn:active {
   transform: scale(0.96);
 }
+
 .overlay-btn.added {
   background: #d4f5e2;
   color: #0a6633;
@@ -678,9 +685,11 @@ nav a.active::after {
   opacity: 1;
   pointer-events: auto;
 }
+
 .delete-btn:hover {
   background: rgba(180, 0, 0, 0.95);
 }
+
 .card.remove-mode .image {
   outline: 2px solid rgba(220, 30, 30, 0.5);
 }
@@ -762,6 +771,7 @@ nav a.active::after {
 .add-to-cart-btn:hover {
   background: #007bff;
 }
+
 .add-to-cart-btn:active {
   transform: scale(0.98);
 }
@@ -839,6 +849,7 @@ nav a.active::after {
    (max-width: 768px)
 ======================== */
 @media (max-width: 768px) {
+
   /* --- Header --- */
   header {
     padding: 0.75rem 1.2rem;
@@ -847,6 +858,7 @@ nav a.active::after {
   .logo {
     font-size: 1.5rem;
   }
+
   .logo img {
     height: 2.8rem;
   }
@@ -883,9 +895,11 @@ nav a.active::after {
   .hamburger {
     display: flex;
   }
+
   .search-bar {
     display: none;
   }
+
   .header-actions {
     gap: 1rem;
   }
