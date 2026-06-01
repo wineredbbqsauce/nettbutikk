@@ -45,6 +45,7 @@ header {
   background: var(--surface-color);
   border-bottom: 1px solid var(--border-color);
   z-index: 999;
+  gap: 0.75rem 2rem;
 }
 
 .logo {
@@ -55,6 +56,7 @@ header {
   font-weight: 700;
   color: var(--text-color);
   text-decoration: none;
+  flex-shrink: 0;
 }
 
 .logo span {
@@ -62,7 +64,7 @@ header {
 }
 
 .logo img {
-  height: 4rem;
+  height: 3.5rem;
   margin-right: 10px;
 }
 
@@ -102,6 +104,7 @@ nav a.active::after {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  flex-shrink: 0;
 }
 
 /* ── HAMBURGER ── */
@@ -128,9 +131,11 @@ nav a.active::after {
 .hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
+
 .hamburger.open span:nth-child(2) {
   opacity: 0;
 }
+
 .hamburger.open span:nth-child(3) {
   transform: rotate(-45deg) translate(5px, -5px);
 }
@@ -755,11 +760,11 @@ nav a.active::after {
   transition: transform 0.3s;
 }
 
-.toggle input:checked + .track {
+.toggle input:checked+.track {
   background: var(--accent);
 }
 
-.toggle input:checked + .track::before {
+.toggle input:checked+.track::before {
   transform: translateX(20px);
 }
 
@@ -948,6 +953,7 @@ nav a.active::after {
   .logo {
     font-size: 1.5rem;
   }
+
   .logo img {
     height: 2.8rem;
   }
