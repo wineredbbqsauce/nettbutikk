@@ -1,20 +1,41 @@
 # USAGE: bcrypt
 
+# ─── SQLite ──────────────────────
 import sqlite3
+
+# ─── MariaDB ─────────────────────
+# import pymysql
+# import pymysql.cursors
+
 import bcrypt
 from functools import wraps
 from flask import session, jsonify
 
+# ─── SQLite ──────────────────────
 DB_PATH = "users.db"
+
+# ─── MariaDB ─────────────────────
+# DB_CONFIG = {
+#     "host": "localhost",
+#     "user": "nettbutikk",
+#     "password": "password",
+#     "database": "nettbutikk",
+#     "cursorclass": pymysql.cursors.DictCursor
+# }
 
 def get_user_db():
     """Get conn to users.db"""
+    # ─── SQLite ──────────────────────
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
+    # ─── MariaDB ─────────────────────
+    # return pymysql.connect(**DB_CONFIG)
+
 def init_user_db():
     """ initialize users table """
+    # ─── SQLite ──────────────────────
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS users (
@@ -26,6 +47,21 @@ def init_user_db():
             )
         """)
         conn.commit()
+    
+    # ─── MariaDB ─────────────────────
+    # conn = pymysql.connect(**DB_CONFIG)
+    # with conn.cursor() as cursor:
+    #     cursor.execute("""
+    #         CREATE TABLE IF NOT EXISTS users (
+    #             id INT AUTO_INCREMENT PRIMARY KEY,
+    #             firstname VARCHAR(100) NOT NULL,
+    #             lastname VARCHAR(100) NOT NULL,
+    #             email VARCHAR(255) UNIQUE NOT NULL,
+    #             password VARCHAR(60) NOT NULL
+    #         )
+    #     """)
+    # conn.commit()
+    # conn.close()
 
 def hashed_password(password: str) -> str:
     """Hash a password for storing - wouldnt be that good to have it plain.. obvs.. """
@@ -37,6 +73,7 @@ def verify_hashed_password(plain: str, hashed: str) -> bool:
 
 def create_user(firstname, lastname, email, password):
     """ Create new user """
+    # ─── SQLite ──────────────────────
     try:
         with get_user_db() as conn:
             conn.execute(
@@ -47,22 +84,52 @@ def create_user(firstname, lastname, email, password):
         return True
     except sqlite3.IntegrityError:
         return False # If user or email already exists
+    
+    # ─── MariaDB ─────────────────────
+    # try:
+    #     conn = get_user_db()
+    #     with conn.cursor() as cursor:
+    #         cursor.execute(
+    #             "INSERT INTO users (firstname, lastname, email, password) VALUES (%s, %s, %s, %s)",
+    #             (firstname, lastname, email, hashed_password(password))
+    #         )
+    #     conn.commit()
+    #     conn.close()
+    #     return True
+    # except pymysql.err.IntegrityError:
+    #     return False # If user or email already exists
 
 def get_user_by_email(email):
     """ Get user by email - as it says in the name """
+    # ─── SQLite ──────────────────────
     conn = get_user_db()
     user = conn.execute(
         "SELECT * FROM users WHERE email = ?", (email,)
     ).fetchone()
+
+    # ─── MariaDB ─────────────────────
+    # conn = get_user_db()
+    # with conn.cursor() as cursor:
+    #     cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
+    #     user = cursor.fetchone()
+
     conn.close()
     return user
 
 def get_user_by_id(user_id):
     """ Get user by id - as it says in the name again, idiot """
+    # ─── SQLite ──────────────────────
     conn = get_user_db()
     user = conn.execute(
         "SELECT * FROM users WHERE id = ?", (user_id,)
     ).fetchone()
+
+    # ─── MariaDB ─────────────────────
+    # conn = get_user_db()
+    # with conn.cursor() as cursor:
+    #     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+    #     user = cursor.fetchone()
+
     conn.close()
     return user
 

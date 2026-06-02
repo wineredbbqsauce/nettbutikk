@@ -1,0 +1,1791 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout — Section</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.cdnfonts.com/css/raqillas" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #007bff;
+        --primary-hover: #0056b3;
+        --success: #28a745;
+        --danger: #dc3545;
+        --bg: #f8f9fa;
+        --surface: #ffffff;
+        --text: #343a40;
+        --muted: #6c757d;
+        --border: #dee2e6;
+        --font: "Poppins", sans-serif;
+        --radius: 12px;
+        --radius-sm: 8px;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      /* ── HEADER ── */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 2rem;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        z-index: 999;
+        gap: 1rem;
+      }
+      .logo {
+        font-family: "Raqillas", sans-serif;
+        display: flex;
+        align-items: center;
+        font-size: 1.9rem;
+        color: var(--text);
+        text-decoration: none;
+        gap: 0.5rem;
+        flex-shrink: 0;
+      }
+      .logo span {
+        margin-top: 0.5rem;
+      }
+      .logo-circle {
+        width: 42px;
+        height: 42px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-family: var(--font);
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 2rem;
+      }
+      nav a {
+        text-decoration: none;
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+      nav a:hover {
+        color: var(--primary);
+      }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        flex-shrink: 0;
+      }
+      .search-bar {
+        position: relative;
+      }
+      .search-bar input {
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 0.4rem 1rem 0.4rem 2.2rem;
+        font-family: var(--font);
+        font-size: 0.85rem;
+        outline: none;
+        width: 170px;
+        background: var(--bg);
+        transition: border-color 0.2s;
+      }
+      .search-bar input:focus {
+        border-color: var(--primary);
+      }
+      .search-bar i {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+      .cart-icon {
+        position: relative;
+        cursor: pointer;
+        font-size: 1.25rem;
+        color: var(--text);
+      }
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff6b9d;
+        color: white;
+        font-size: 0.6rem;
+        font-weight: 700;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .login-btn a {
+        color: var(--text);
+        font-size: 1.1rem;
+        text-decoration: none;
+      }
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+      }
+      .hamburger span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: var(--text);
+        border-radius: 2px;
+      }
+
+      /* ── BREADCRUMB ── */
+      .breadcrumb-bar {
+        margin-top: 70px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0.55rem 2rem;
+      }
+      .breadcrumb-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+      .breadcrumb-inner a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+      .breadcrumb-inner i {
+        font-size: 0.6rem;
+        color: var(--border);
+      }
+
+      /* ── PROGRESS STEPS ── */
+      .checkout-progress {
+        background: var(--surface);
+        padding: 1.4rem 2rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .progress-inner {
+        max-width: 680px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        flex-shrink: 0;
+      }
+      .step-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 2px solid var(--border);
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+        transition: all 0.35s;
+      }
+      .step span {
+        font-size: 0.68rem;
+        font-weight: 500;
+        color: var(--muted);
+        transition: color 0.35s;
+      }
+      .step.active .step-circle {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
+      }
+      .step.active span {
+        color: var(--primary);
+      }
+      .step.done .step-circle {
+        background: #e8f5e9;
+        border-color: var(--success);
+        color: var(--success);
+      }
+      .step.done span {
+        color: var(--success);
+      }
+      .step-line {
+        flex: 1;
+        height: 2px;
+        background: var(--border);
+        margin-bottom: 1.1rem;
+        transition: background 0.35s;
+      }
+      .step-line.done {
+        background: var(--success);
+      }
+      .step-line.active {
+        background: var(--primary);
+      }
+
+      /* ── MAIN LAYOUT ── */
+      .checkout-wrapper {
+        max-width: 1180px;
+        margin: 2rem auto 5rem;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 2rem;
+        align-items: start;
+      }
+
+      /* ── CARDS ── */
+      .checkout-card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 2rem;
+        margin-bottom: 1.25rem;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .card-header-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-sm);
+        background: rgba(0, 123, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+      .card-header h2 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        margin: 0 0 0.2rem;
+      }
+      .card-subtitle {
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin: 0;
+      }
+
+      /* ── FORM ── */
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .form-group.full {
+        grid-column: 1 / -1;
+      }
+      label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      select {
+        font-family: var(--font);
+        font-size: 0.88rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 0.62rem 0.9rem;
+        color: var(--text);
+        background: var(--surface);
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        width: 100%;
+        outline: none;
+      }
+      input:focus,
+      select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+      }
+      select {
+        cursor: pointer;
+      }
+      .icon-wrap {
+        position: relative;
+      }
+      .icon-wrap i {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 0.78rem;
+        pointer-events: none;
+      }
+      .icon-wrap input {
+        padding-left: 2.3rem;
+      }
+
+      /* ── SHIPPING METHODS ── */
+      .subheading {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin: 1.75rem 0 0.85rem;
+      }
+      .method-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+      .method-card {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.95rem 1rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        user-select: none;
+      }
+      .method-card:hover {
+        border-color: var(--primary);
+        background: rgba(0, 123, 255, 0.02);
+      }
+      .method-card.selected {
+        border-color: var(--primary);
+        background: rgba(0, 123, 255, 0.04);
+      }
+      .method-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+        flex-shrink: 0;
+      }
+      .method-card.selected .method-icon {
+        background: rgba(0, 123, 255, 0.1);
+        color: var(--primary);
+      }
+      .method-info {
+        flex: 1;
+      }
+      .method-name {
+        display: block;
+        font-size: 0.88rem;
+        font-weight: 500;
+      }
+      .method-eta {
+        display: block;
+        font-size: 0.73rem;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+      .method-price {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-right: 2rem;
+      }
+      .method-check {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.55rem;
+        color: transparent;
+        transition: all 0.2s;
+      }
+      .method-card.selected .method-check {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+      }
+
+      /* ── BUTTONS ── */
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.78rem 1.6rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: var(--font);
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 1.75rem;
+        text-decoration: none;
+      }
+      .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.4rem;
+        background: transparent;
+        color: var(--muted);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-family: var(--font);
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+      .btn-secondary:hover {
+        border-color: var(--muted);
+        color: var(--text);
+      }
+      .btn-green {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.82rem 1.8rem;
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: var(--font);
+        font-size: 0.92rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex: 1;
+      }
+      .btn-green:hover {
+        background: #218838;
+        transform: translateY(-1px);
+      }
+      .step-nav {
+        display: flex;
+        gap: 0.85rem;
+        margin-top: 1.75rem;
+      }
+
+      /* ── PAYMENT TABS ── */
+      .pay-tabs {
+        display: flex;
+        gap: 0;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.5rem;
+      }
+      .pay-tab {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.6rem 1.2rem;
+        background: none;
+        border: none;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        font-family: var(--font);
+        font-size: 0.83rem;
+        font-weight: 500;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .pay-tab:hover {
+        color: var(--primary);
+      }
+      .pay-tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+
+      /* ── CARD PREVIEW ── */
+      .card-preview {
+        background: linear-gradient(
+          135deg,
+          #1a1a2e 0%,
+          #16213e 60%,
+          #0f3460 100%
+        );
+        border-radius: 14px;
+        padding: 1.4rem;
+        margin-bottom: 1.4rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        min-height: 155px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .card-preview::before {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .card-preview::after {
+        content: "";
+        position: absolute;
+        bottom: -60px;
+        left: 40px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .cp-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .cp-brand {
+        font-family: "Raqillas", sans-serif;
+        font-size: 1.05rem;
+        opacity: 0.85;
+      }
+      .cp-network {
+        font-size: 1.9rem;
+        opacity: 0.7;
+      }
+      .cp-number {
+        font-family: "Courier New", monospace;
+        font-size: 1rem;
+        letter-spacing: 0.2em;
+        opacity: 0.9;
+        margin: 0.6rem 0;
+      }
+      .cp-bottom {
+        display: flex;
+        gap: 2rem;
+      }
+      .cp-field {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .cp-label {
+        font-size: 0.58rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        opacity: 0.55;
+      }
+      .cp-value {
+        font-size: 0.85rem;
+        font-weight: 500;
+        opacity: 0.9;
+        text-transform: uppercase;
+      }
+
+      /* ── SECURE BADGES ── */
+      .secure-badges {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .secure-badges span {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.73rem;
+        color: var(--muted);
+      }
+      .secure-badges .fa-lock {
+        color: var(--success);
+      }
+      .secure-badges .fab {
+        font-size: 1.35rem;
+      }
+      .fa-cc-visa {
+        color: #1a1f71 !important;
+      }
+      .fa-cc-mastercard {
+        color: #eb001b !important;
+      }
+      .fa-cc-amex {
+        color: #007bc1 !important;
+      }
+      .cvv-tip {
+        font-size: 0.73rem;
+        color: var(--muted);
+        cursor: help;
+        margin-left: 3px;
+      }
+
+      /* ── ALT PAYMENT ── */
+      .alt-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 2rem 1rem;
+        gap: 1rem;
+      }
+      .alt-block p {
+        font-size: 0.87rem;
+        color: var(--muted);
+        max-width: 280px;
+        line-height: 1.6;
+      }
+      .paypal-icon {
+        font-size: 3.5rem;
+        color: #003087;
+      }
+      .alt-note {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.77rem;
+        color: var(--muted);
+        background: var(--bg);
+        padding: 0.45rem 1rem;
+        border-radius: 20px;
+      }
+      .klarna-logo {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: #ffb3c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #17120e;
+      }
+      .klarna-opts {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .klarna-opt {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.9rem;
+        background: var(--bg);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      /* ── CONFIRM ── */
+      .confirm-section {
+        padding: 0.95rem 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .confirm-section:last-of-type {
+        border-bottom: none;
+      }
+      .confirm-row-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.4rem;
+      }
+      .confirm-row-head span {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .edit-btn {
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 0.78rem;
+        font-family: var(--font);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .edit-btn:hover {
+        text-decoration: underline;
+      }
+      .confirm-val {
+        font-size: 0.88rem;
+        color: var(--text);
+        line-height: 1.65;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      /* ── PROMO ── */
+      .promo-block {
+        padding: 1.1rem 0;
+      }
+      .promo-block > label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--muted);
+        margin-bottom: 0.45rem;
+      }
+      .promo-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .promo-row input {
+        flex: 1;
+        font-family: var(--font);
+        font-size: 0.84rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 0.55rem 0.85rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .promo-row input:focus {
+        border-color: var(--primary);
+      }
+      .btn-apply {
+        padding: 0.55rem 1rem;
+        background: var(--text);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: var(--font);
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s;
+      }
+      .btn-apply:hover {
+        background: #555;
+      }
+      .promo-msg {
+        display: block;
+        font-size: 0.75rem;
+        margin-top: 0.35rem;
+      }
+      .promo-msg.ok {
+        color: var(--success);
+      }
+      .promo-msg.err {
+        color: var(--danger);
+      }
+
+      /* ── SUCCESS ── */
+      .success-card {
+        text-align: center;
+        padding: 3rem 2rem;
+      }
+      .success-ring {
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        background: rgba(40, 167, 69, 0.1);
+        border: 3px solid var(--success);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.4rem;
+        font-size: 1.7rem;
+        color: var(--success);
+        animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      @keyframes pop {
+        from {
+          transform: scale(0);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .success-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+      }
+      .success-msg {
+        font-size: 0.88rem;
+        color: var(--muted);
+        max-width: 340px;
+        margin: 0 auto 1.4rem;
+        line-height: 1.7;
+      }
+      .order-badge {
+        display: inline-block;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 0.38rem 1.1rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-bottom: 1.75rem;
+      }
+      .order-badge strong {
+        color: var(--primary);
+      }
+      .success-actions {
+        display: flex;
+        gap: 0.9rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .success-actions .btn-primary,
+      .success-actions .btn-secondary {
+        width: auto;
+        margin-top: 0;
+        min-width: 150px;
+      }
+
+      /* ── SUMMARY SIDEBAR ── */
+      .summary-card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 1.4rem;
+        position: sticky;
+        top: 88px;
+      }
+      .summary-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 1.1rem;
+        padding-bottom: 0.9rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .sum-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+      .sum-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+      }
+      .sum-img-wrap {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .sum-img {
+        width: 54px;
+        height: 54px;
+        border-radius: var(--radius-sm);
+        object-fit: cover;
+        border: 1px solid var(--border);
+        background: var(--bg);
+      }
+      .sum-qty {
+        position: absolute;
+        top: -7px;
+        right: -7px;
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        background: var(--text);
+        color: white;
+        font-size: 0.62rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sum-info {
+        flex: 1;
+      }
+      .sum-name {
+        display: block;
+        font-size: 0.83rem;
+        font-weight: 500;
+      }
+      .sum-variant {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+      .sum-price {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-left: auto;
+        white-space: nowrap;
+      }
+      .sum-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 1rem 0;
+      }
+      .sum-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+      .sum-line {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.83rem;
+        color: var(--muted);
+      }
+      .sum-free {
+        color: var(--success);
+        font-weight: 500;
+      }
+      .sum-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1rem;
+        font-weight: 700;
+        padding-top: 0.2rem;
+      }
+      .trust-badges {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        margin-top: 1.1rem;
+        padding-top: 1.1rem;
+        border-top: 1px solid var(--border);
+      }
+      .trust-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .trust-item i {
+        color: var(--success);
+        width: 14px;
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        .checkout-wrapper {
+          grid-template-columns: 1fr;
+        }
+        .summary-card {
+          position: static;
+        }
+        nav {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+      }
+      @media (max-width: 580px) {
+        header {
+          padding: 0.6rem 1rem;
+        }
+        .checkout-card {
+          padding: 1.25rem;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .form-group.full {
+          grid-column: 1;
+        }
+        .cp-number {
+          font-size: 0.85rem;
+          letter-spacing: 0.14em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header>
+      <div class="logo">
+        <div class="logo-circle">S</div>
+        <span>Section</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Products</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="header-actions">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search..." />
+        </div>
+        <div class="cart-icon">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-count">3</span>
+        </div>
+        <div class="login-btn">
+          <a href="#"><i class="fa-solid fa-user"></i></a>
+        </div>
+      </div>
+    </header>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-bar">
+      <div class="breadcrumb-inner">
+        <a href="#">Home</a>
+        <i class="fas fa-chevron-right"></i>
+        <a href="#">Shop</a>
+        <i class="fas fa-chevron-right"></i>
+        <span>Checkout</span>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="checkout-progress">
+      <div class="progress-inner">
+        <div class="step done" id="si1">
+          <div class="step-circle"><i class="fas fa-check"></i></div>
+          <span>Cart</span>
+        </div>
+        <div class="step-line done" id="l12"></div>
+        <div class="step active" id="si2">
+          <div class="step-circle"><i class="fas fa-map-marker-alt"></i></div>
+          <span>Shipping</span>
+        </div>
+        <div class="step-line" id="l23"></div>
+        <div class="step" id="si3">
+          <div class="step-circle"><i class="fas fa-credit-card"></i></div>
+          <span>Payment</span>
+        </div>
+        <div class="step-line" id="l34"></div>
+        <div class="step" id="si4">
+          <div class="step-circle"><i class="fas fa-check"></i></div>
+          <span>Confirm</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <main class="checkout-wrapper">
+      <!-- LEFT COLUMN -->
+      <div id="form-col">
+        <!-- STEP: SHIPPING -->
+        <section class="checkout-card" id="s-shipping">
+          <div class="card-header">
+            <div class="card-header-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h2>Shipping Information</h2>
+              <p class="card-subtitle">Where should we send your order?</p>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fname">First Name</label>
+              <input type="text" id="fname" placeholder="John" />
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name</label>
+              <input type="text" id="lname" placeholder="Doe" />
+            </div>
+            <div class="form-group full">
+              <label for="email">Email Address</label>
+              <div class="icon-wrap">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="john@example.com" />
+              </div>
+            </div>
+            <div class="form-group full">
+              <label for="phone">Phone Number</label>
+              <div class="icon-wrap">
+                <i class="fas fa-phone"></i>
+                <input type="tel" id="phone" placeholder="+47 000 00 000" />
+              </div>
+            </div>
+            <div class="form-group full">
+              <label for="address">Street Address</label>
+              <input type="text" id="address" placeholder="123 Main Street" />
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" placeholder="Oslo" />
+            </div>
+            <div class="form-group">
+              <label for="postal">Postal Code</label>
+              <input type="text" id="postal" placeholder="0001" />
+            </div>
+            <div class="form-group full">
+              <label for="country">Country</label>
+              <select id="country">
+                <option value="NO" selected>Norway</option>
+                <option value="SE">Sweden</option>
+                <option value="DK">Denmark</option>
+                <option value="FI">Finland</option>
+                <option value="DE">Germany</option>
+                <option value="GB">United Kingdom</option>
+                <option value="US">United States</option>
+              </select>
+            </div>
+          </div>
+
+          <p class="subheading">Shipping Method</p>
+          <div class="method-list">
+            <label class="method-card selected" onclick="selectMethod(this)">
+              <input type="radio" name="ship" value="standard" checked hidden />
+              <div class="method-icon"><i class="fas fa-truck"></i></div>
+              <div class="method-info">
+                <span class="method-name">Standard Shipping</span>
+                <span class="method-eta">3–5 business days</span>
+              </div>
+              <span class="method-price">Free</span>
+              <div class="method-check"><i class="fas fa-check"></i></div>
+            </label>
+
+            <label class="method-card" onclick="selectMethod(this)">
+              <input type="radio" name="ship" value="express" hidden />
+              <div class="method-icon"><i class="fas fa-bolt"></i></div>
+              <div class="method-info">
+                <span class="method-name">Express Shipping</span>
+                <span class="method-eta">1–2 business days</span>
+              </div>
+              <span class="method-price">$9.99</span>
+              <div class="method-check"><i class="fas fa-check"></i></div>
+            </label>
+
+            <label class="method-card" onclick="selectMethod(this)">
+              <input type="radio" name="ship" value="overnight" hidden />
+              <div class="method-icon">
+                <i class="fas fa-shipping-fast"></i>
+              </div>
+              <div class="method-info">
+                <span class="method-name">Overnight Shipping</span>
+                <span class="method-eta">Next business day</span>
+              </div>
+              <span class="method-price">$19.99</span>
+              <div class="method-check"><i class="fas fa-check"></i></div>
+            </label>
+          </div>
+
+          <button class="btn-primary" onclick="goTo('payment')">
+            Continue to Payment <i class="fas fa-arrow-right"></i>
+          </button>
+        </section>
+
+        <!-- STEP: PAYMENT -->
+        <section class="checkout-card hidden" id="s-payment">
+          <div class="card-header">
+            <div class="card-header-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <div>
+              <h2>Payment Details</h2>
+              <p class="card-subtitle">
+                All transactions are secured and encrypted
+              </p>
+            </div>
+          </div>
+
+          <div class="pay-tabs">
+            <button class="pay-tab active" onclick="switchTab(this, 'card')">
+              <i class="fas fa-credit-card"></i> Card
+            </button>
+            <button class="pay-tab" onclick="switchTab(this, 'paypal')">
+              <i class="fab fa-paypal"></i> PayPal
+            </button>
+            <button class="pay-tab" onclick="switchTab(this, 'klarna')">
+              <i class="fas fa-k"></i> Klarna
+            </button>
+          </div>
+
+          <!-- CARD TAB -->
+          <div id="tab-card">
+            <div class="card-preview">
+              <div class="cp-top">
+                <span class="cp-brand">Section</span>
+                <i class="fas fa-credit-card cp-network" id="cp-network"></i>
+              </div>
+              <div class="cp-number" id="cp-number">•••• •••• •••• ••••</div>
+              <div class="cp-bottom">
+                <div class="cp-field">
+                  <span class="cp-label">Card Holder</span>
+                  <span class="cp-value" id="cp-name">YOUR NAME</span>
+                </div>
+                <div class="cp-field">
+                  <span class="cp-label">Expires</span>
+                  <span class="cp-value" id="cp-expiry">MM/YY</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group full">
+                <label for="cc-name">Name on Card</label>
+                <input
+                  type="text"
+                  id="cc-name"
+                  placeholder="John Doe"
+                  oninput="previewCard()"
+                />
+              </div>
+              <div class="form-group full">
+                <label for="cc-num">Card Number</label>
+                <div class="icon-wrap">
+                  <i class="fas fa-credit-card"></i>
+                  <input
+                    type="text"
+                    id="cc-num"
+                    placeholder="0000 0000 0000 0000"
+                    maxlength="19"
+                    oninput="
+                      fmtCardNum(this);
+                      previewCard();
+                    "
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cc-exp">Expiry Date</label>
+                <input
+                  type="text"
+                  id="cc-exp"
+                  placeholder="MM/YY"
+                  maxlength="5"
+                  oninput="
+                    fmtExpiry(this);
+                    previewCard();
+                  "
+                />
+              </div>
+              <div class="form-group">
+                <label for="cc-cvv"
+                  >CVV
+                  <i
+                    class="fas fa-question-circle cvv-tip"
+                    title="3-digit code on back of card"
+                  ></i
+                ></label>
+                <input
+                  type="text"
+                  id="cc-cvv"
+                  placeholder="•••"
+                  maxlength="4"
+                />
+              </div>
+            </div>
+
+            <div class="secure-badges">
+              <span><i class="fas fa-lock"></i> 256-bit SSL</span>
+              <span><i class="fab fa-cc-visa"></i></span>
+              <span><i class="fab fa-cc-mastercard"></i></span>
+              <span><i class="fab fa-cc-amex"></i></span>
+            </div>
+          </div>
+
+          <!-- PAYPAL TAB -->
+          <div id="tab-paypal" class="hidden">
+            <div class="alt-block">
+              <i class="fab fa-paypal paypal-icon"></i>
+              <p>
+                You'll be redirected to PayPal to complete your purchase
+                securely.
+              </p>
+              <div class="alt-note">
+                <i class="fas fa-shield-alt"></i> Your financial info stays with
+                PayPal
+              </div>
+            </div>
+          </div>
+
+          <!-- KLARNA TAB -->
+          <div id="tab-klarna" class="hidden">
+            <div class="alt-block">
+              <div class="klarna-logo">K</div>
+              <p>
+                Pay later or split your purchase into interest-free
+                installments.
+              </p>
+              <div class="klarna-opts">
+                <div class="klarna-opt">
+                  <i class="fas fa-calendar-check"></i> Pay in 30 days
+                </div>
+                <div class="klarna-opt">
+                  <i class="fas fa-th-large"></i> 4 interest-free payments
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-nav">
+            <button class="btn-secondary" onclick="goTo('shipping')">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button
+              class="btn-primary"
+              style="margin-top: 0; flex: 1"
+              onclick="goTo('confirm')"
+            >
+              Review Order <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- STEP: CONFIRM -->
+        <section class="checkout-card hidden" id="s-confirm">
+          <div class="card-header">
+            <div class="card-header-icon">
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+            <div>
+              <h2>Review Order</h2>
+              <p class="card-subtitle">
+                Double-check everything before placing your order
+              </p>
+            </div>
+          </div>
+
+          <div class="confirm-section">
+            <div class="confirm-row-head">
+              <span>Shipping to</span>
+              <button class="edit-btn" onclick="goTo('shipping')">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+            </div>
+            <p class="confirm-val" id="cv-addr">
+              John Doe · 123 Main Street, Oslo 0001, Norway
+            </p>
+            <p
+              class="confirm-val"
+              id="cv-contact"
+              style="margin-top: 3px; color: var(--muted); font-size: 0.82rem"
+            >
+              john@example.com · +47 000 00 000
+            </p>
+          </div>
+
+          <div class="confirm-section">
+            <div class="confirm-row-head">
+              <span>Payment</span>
+              <button class="edit-btn" onclick="goTo('payment')">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+            </div>
+            <p class="confirm-val" id="cv-pay">
+              <i class="fas fa-credit-card"></i> •••• •••• •••• 4242
+            </p>
+          </div>
+
+          <div class="confirm-section">
+            <div class="confirm-row-head"><span>Shipping method</span></div>
+            <p class="confirm-val" id="cv-ship">
+              Standard Shipping — Free (3–5 business days)
+            </p>
+          </div>
+
+          <div class="promo-block">
+            <label>Have a promo code?</label>
+            <div class="promo-row">
+              <input type="text" id="promo-in" placeholder="Enter code..." />
+              <button class="btn-apply" onclick="applyPromo()">Apply</button>
+            </div>
+            <span class="promo-msg" id="promo-msg"></span>
+          </div>
+
+          <div class="step-nav">
+            <button class="btn-secondary" onclick="goTo('payment')">
+              <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <button class="btn-green" onclick="placeOrder()">
+              <i class="fas fa-lock"></i> Place Order
+            </button>
+          </div>
+        </section>
+
+        <!-- STEP: SUCCESS -->
+        <section class="checkout-card hidden success-card" id="s-success">
+          <div class="success-ring"><i class="fas fa-check"></i></div>
+          <h2 class="success-title">Order Placed!</h2>
+          <p class="success-msg">
+            Thank you for your purchase. We'll send a confirmation email
+            shortly.
+          </p>
+          <div class="order-badge">
+            Order #<strong id="order-num">SEC-00000000</strong>
+          </div>
+          <div class="success-actions">
+            <a href="#" class="btn-primary">Back to Home</a>
+            <a href="#" class="btn-secondary">View Orders</a>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT: SUMMARY SIDEBAR -->
+      <aside>
+        <div class="summary-card">
+          <div class="summary-title">Order Summary</div>
+
+          <div class="sum-items">
+            <div class="sum-item">
+              <div class="sum-img-wrap">
+                <div class="sum-img"></div>
+                <span class="sum-qty">2</span>
+              </div>
+              <div class="sum-info">
+                <span class="sum-name">Premium Widget</span>
+                <span class="sum-variant">Black / Medium</span>
+              </div>
+              <span class="sum-price">$49.98</span>
+            </div>
+            <div class="sum-item">
+              <div class="sum-img-wrap">
+                <div class="sum-img"></div>
+                <span class="sum-qty">1</span>
+              </div>
+              <div class="sum-info">
+                <span class="sum-name">Classic Tote Bag</span>
+                <span class="sum-variant">Natural</span>
+              </div>
+              <span class="sum-price">$24.99</span>
+            </div>
+            <div class="sum-item">
+              <div class="sum-img-wrap">
+                <div class="sum-img"></div>
+                <span class="sum-qty">1</span>
+              </div>
+              <div class="sum-info">
+                <span class="sum-name">Ceramic Mug Set</span>
+                <span class="sum-variant">White / Set of 2</span>
+              </div>
+              <span class="sum-price">$18.99</span>
+            </div>
+          </div>
+
+          <div class="sum-divider"></div>
+
+          <div class="sum-lines">
+            <div class="sum-line">
+              <span>Subtotal</span>
+              <span id="s-subtotal">$93.96</span>
+            </div>
+            <div class="sum-line" id="s-disc-row" style="display: none">
+              <span style="color: var(--success)"
+                ><i class="fas fa-tag"></i> Discount</span
+              >
+              <span
+                id="s-discount"
+                style="color: var(--success); font-weight: 600"
+                >-$0.00</span
+              >
+            </div>
+            <div class="sum-line">
+              <span>Shipping</span>
+              <span id="s-shipping" class="sum-free">Free</span>
+            </div>
+            <div class="sum-line">
+              <span>Tax (25% MVA)</span>
+              <span id="s-tax">$23.49</span>
+            </div>
+          </div>
+
+          <div class="sum-divider"></div>
+
+          <div class="sum-total">
+            <span>Total</span>
+            <span id="s-total">$117.45</span>
+          </div>
+
+          <div class="trust-badges">
+            <div class="trust-item">
+              <i class="fas fa-undo"></i> 30-day returns
+            </div>
+            <div class="trust-item">
+              <i class="fas fa-lock"></i> Secure checkout
+            </div>
+            <div class="trust-item">
+              <i class="fas fa-headset"></i> 24/7 support
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <script>
+      // ── NAVIGATION ──
+      const steps = ["shipping", "payment", "confirm", "success"];
+      const stepIds = {
+        shipping: "s-shipping",
+        payment: "s-payment",
+        confirm: "s-confirm",
+        success: "s-success",
+      };
+      const siMap = { shipping: 2, payment: 3, confirm: 4, success: 4 };
+
+      function goTo(step) {
+        steps.forEach((s) =>
+          document.getElementById(stepIds[s]).classList.add("hidden"),
+        );
+        document.getElementById(stepIds[step]).classList.remove("hidden");
+        updateProgress(step);
+        if (step === "confirm") fillConfirm();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function updateProgress(step) {
+        const active = siMap[step];
+        [1, 2, 3, 4].forEach((n) => {
+          const el = document.getElementById("si" + n);
+          el.classList.remove("active", "done");
+          if (n < active) el.classList.add("done");
+          else if (n === active) el.classList.add("active");
+        });
+        ["l12", "l23", "l34"].forEach((id, i) => {
+          const el = document.getElementById(id);
+          const lineNum = i + 1;
+          el.classList.remove("active", "done");
+          if (lineNum < active - 1) el.classList.add("done");
+          else if (lineNum === active - 1) el.classList.add("active");
+        });
+      }
+
+      // ── SHIPPING METHOD ──
+      function selectMethod(card) {
+        document
+          .querySelectorAll(".method-card")
+          .forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+        card.querySelector("input").checked = true;
+        const val = card.querySelector("input").value;
+        const costs = { standard: 0, express: 9.99, overnight: 19.99 };
+        const cost = costs[val] || 0;
+        const shEl = document.getElementById("s-shipping");
+        shEl.textContent = cost === 0 ? "Free" : "$" + cost.toFixed(2);
+        shEl.className = cost === 0 ? "sum-free" : "";
+        recalc();
+      }
+
+      // ── RECALCULATE TOTALS ──
+      function recalc() {
+        const subtotal = 93.96;
+        const discRow = document.getElementById("s-disc-row");
+        const discEl = document.getElementById("s-discount");
+        const disc =
+          discRow.style.display !== "none"
+            ? parseFloat(discEl.textContent.replace(/[$-]/g, "")) || 0
+            : 0;
+        const shText = document.getElementById("s-shipping").textContent;
+        const sh =
+          shText === "Free" ? 0 : parseFloat(shText.replace("$", "")) || 0;
+        const taxable = subtotal - disc + sh;
+        const tax = taxable * 0.25;
+        document.getElementById("s-tax").textContent = "$" + tax.toFixed(2);
+        document.getElementById("s-total").textContent =
+          "$" + (taxable + tax).toFixed(2);
+      }
+
+      // ── CARD PREVIEW ──
+      function previewCard() {
+        const name = document.getElementById("cc-name").value || "YOUR NAME";
+        const num = document.getElementById("cc-num").value || "";
+        const exp = document.getElementById("cc-exp").value || "MM/YY";
+        document.getElementById("cp-name").textContent = name.toUpperCase();
+        document.getElementById("cp-expiry").textContent = exp;
+        const raw = num.replace(/\s/g, "").padEnd(16, "•");
+        document.getElementById("cp-number").textContent = raw
+          .match(/.{1,4}/g)
+          .join(" ");
+        const icon = document.getElementById("cp-network");
+        const f = num.replace(/\s/g, "")[0];
+        icon.className =
+          f === "4"
+            ? "fab fa-cc-visa cp-network"
+            : f === "5"
+              ? "fab fa-cc-mastercard cp-network"
+              : f === "3"
+                ? "fab fa-cc-amex cp-network"
+                : "fas fa-credit-card cp-network";
+      }
+
+      function fmtCardNum(el) {
+        let v = el.value.replace(/\D/g, "").substring(0, 16);
+        el.value = v.replace(/(.{4})/g, "$1 ").trim();
+      }
+
+      function fmtExpiry(el) {
+        let v = el.value.replace(/\D/g, "").substring(0, 4);
+        if (v.length >= 3) v = v.substring(0, 2) + "/" + v.substring(2);
+        el.value = v;
+      }
+
+      // ── PAYMENT TABS ──
+      function switchTab(btn, tab) {
+        document
+          .querySelectorAll(".pay-tab")
+          .forEach((t) => t.classList.remove("active"));
+        ["card", "paypal", "klarna"].forEach((t) => {
+          document.getElementById("tab-" + t).classList.add("hidden");
+        });
+        btn.classList.add("active");
+        document.getElementById("tab-" + tab).classList.remove("hidden");
+      }
+
+      // ── FILL CONFIRM STEP ──
+      function fillConfirm() {
+        const fn = document.getElementById("fname").value || "—";
+        const ln = document.getElementById("lname").value || "";
+        const addr = document.getElementById("address").value || "";
+        const city = document.getElementById("city").value || "";
+        const postal = document.getElementById("postal").value || "";
+        const cSel = document.getElementById("country");
+        const country = cSel.options[cSel.selectedIndex].text;
+        document.getElementById("cv-addr").textContent =
+          `${fn} ${ln} · ${addr}, ${city} ${postal}, ${country}`;
+
+        const email = document.getElementById("email").value || "";
+        const phone = document.getElementById("phone").value || "";
+        document.getElementById("cv-contact").textContent = [email, phone]
+          .filter(Boolean)
+          .join(" · ");
+
+        const last4 =
+          document
+            .getElementById("cc-num")
+            .value.replace(/\s/g, "")
+            .slice(-4) || "••••";
+        document.getElementById("cv-pay").innerHTML =
+          `<i class="fas fa-credit-card"></i> •••• •••• •••• ${last4}`;
+
+        const sel = document.querySelector('input[name="ship"]:checked');
+        const labels = {
+          standard: "Standard Shipping — Free (3–5 business days)",
+          express: "Express Shipping — $9.99 (1–2 business days)",
+          overnight: "Overnight Shipping — $19.99 (next business day)",
+        };
+        document.getElementById("cv-ship").textContent =
+          labels[sel?.value] || labels.standard;
+      }
+
+      // ── PROMO CODE ──
+      const PROMOS = { SECTION10: 10, WELCOME20: 20, SAVE15: 15 };
+
+      function applyPromo() {
+        const code = document
+          .getElementById("promo-in")
+          .value.trim()
+          .toUpperCase();
+        const msg = document.getElementById("promo-msg");
+        if (PROMOS[code]) {
+          const pct = PROMOS[code];
+          const disc = (93.96 * pct) / 100;
+          document.getElementById("s-discount").textContent =
+            "-$" + disc.toFixed(2);
+          document.getElementById("s-disc-row").style.display = "flex";
+          msg.textContent = `✓ Code applied — ${pct}% off!`;
+          msg.className = "promo-msg ok";
+          document.getElementById("promo-in").disabled = true;
+          recalc();
+        } else {
+          msg.textContent = "Invalid promo code. Try SECTION10";
+          msg.className = "promo-msg err";
+        }
+      }
+
+      // ── PLACE ORDER ──
+      function placeOrder() {
+        const btn = document.querySelector(".btn-green");
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order…';
+        btn.disabled = true;
+        setTimeout(() => {
+          document.getElementById("order-num").textContent =
+            "SEC-" + Date.now().toString().slice(-8);
+          goTo("success");
+        }, 1400);
+      }
+
+      // ── INIT ──
+      goTo("shipping");
+      recalc();
+    </script>
+  </body>
+</html>

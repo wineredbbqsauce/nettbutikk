@@ -33,7 +33,7 @@ SEED_PRODUCTS = [
     # (
     #     "Product Name", 
     #      19.99,
-    #     "https://example.com/product-image.jpg",
+    #     "https://example.com/product-image.png" / "/static/assets/product-image.png",
     #     "Short product description."
     # ),
 ]

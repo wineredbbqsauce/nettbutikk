@@ -1,7 +1,21 @@
+# IF YOU WANT TO SWITCH TO MARIA DB, UNCOMMENT THE MARIA DB SECTIONS AND COMMENT OUT THE SQLITE SECTIONS IN THIS FILE, 
+# MODELS.PY AND AUTH.PY. 
+# 
+# ALSO REMEMBER TO INSTALL PYMYSQL (pip install PyMySQL) AND SET UP A MARIA DB DATABASE WITH THE SAME CREDENTIALS AS IN DB_CONFIG. 
+# 
+# IF YOU FORGET TO COMMENT OUT THE SQLITE SECTIONS, 
+# IT WILL STILL WORK WITH SQLITE, BUT IT'LL BE A MESS AND PROBABLY SLOWER, SO DON'T DO IT.
+
+
 from flask import Flask, jsonify, redirect, render_template, g, request, session
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+# ─── SQLite ────────────────────────
 import sqlite3
+# ─── MariaDB ───────────────────────
+# import pymysql
+# import pymysql.cursors
+
 import os
 import uuid
 from datetime import datetime, timedelta
@@ -10,7 +24,18 @@ from seed_products import SEED_PRODUCTS
 
 app = Flask(__name__)
 CORS(app)
+# ─── SQLite ────────────────────────
 DB_PATH = 'products.db'
+# ─── MariaDB ───────────────────────
+# DB_CONFIG = {
+#     "host":       "localhost",
+#     "user":       "nettbutikk",
+#     "password":   "your_password_here",
+#     "database":   "nettbutikk",
+#     "charset":    "utf8mb4",
+#     "cursorclass": pymysql.cursors.DictCursor,
+# }
+
 UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 app.secret_key = "supersecretkey" # For session management, would be better to have it in env variable or something, but this is just a simple project so whatever
@@ -26,10 +51,16 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def get_db():
+    # ─── SQLite ──────────────────────
     if "db" not in g:
         g.db = sqlite3.connect(DB_PATH)
         g.db.row_factory = sqlite3.Row
     return g.db
+# ─── MariaDB ─────────────────────────
+# def get_db():
+#     if "db" not in g:
+#         g.db = pymysql.connect(**DB_CONFIG)
+#     return g.db
 
 @app.teardown_appcontext
 def close_db(error):
@@ -38,6 +69,7 @@ def close_db(error):
         db.close()
 
 def init_db():
+    # ─── SQLite ─────────────────────
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS products (
@@ -67,6 +99,37 @@ def init_db():
                 SEED_PRODUCTS
             )
         conn.commit()
+    # ─── MariaDB ─────────────────────
+    # conn = mysql.connect(**DB_CONFIG)
+    # with conn.cursor() as cursor:
+    #     cursor.execute("""
+    #         CREATE TABLE IF NOT EXISTS products (
+    #             id          INT AUTO_INCREMENT PRIMARY KEY,
+    #             name        VARCHAR(255) NOT NULL,
+    #             price       DECIMAL(10,2) NOT NULL,
+    #             image_url   TEXT,
+    #             description TEXT
+    #         )
+    #     """)
+    #     cursor.execute("""
+    #         CREATE TABLE IF NOT EXISTS cart (
+    #             id          INT AUTO_INCREMENT PRIMARY KEY,
+    #             user_id     INT NOT NULL,
+    #             product_id  INT NOT NULL,
+    #             quantity    INT NOT NULL DEFAULT 1,
+    #             FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    #             UNIQUE(user_id, product_id)
+    #         )
+    #     """)
+    #     cursor.execute("SELECT COUNT(*) as count FROM products")
+    #     if cursor.fetchone()["count"] == 0:
+    #         cursor.executemany(
+    #             "INSERT INTO products (name, price, image_url, description) VALUES (%(name)s, %(price)s, %(image_url)s, %(description)s)",
+    #             SEED_PRODUCTS
+    #         )
+    #     conn.commit()
+    #     conn.close()
+
 
 
 # ============
@@ -146,6 +209,7 @@ def delete_account():
 
     # slett cart først (forgein key)
     db = get_db()
+    # ─── SQLite ──────────────────────
     db.execute("DELETE FROM cart WHERE user_id = ?", (user_id,))
     db.commit()
 
@@ -153,6 +217,17 @@ def delete_account():
     with _sqlite3.connect("users.db") as conn:
         conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
         conn.commit()
+
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #   cursor.execute("DELETE FROM cart WHERE user_id = %s", (user_id,))
+    # db.commit()
+    # from auth import get_user_db as _get_user_db
+    # user_conn as _get_user_db()
+    # with user_conn.cuirsor() as cursor:
+    #   cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+    # user_conn.commit()
+    # user_conn.close()
     
     session.clear()
     return jsonify({"success": True, "message": "Account deleted successfully"}), 200
@@ -167,6 +242,7 @@ def get_cart():
         return jsonify({"error": "Not authenticated"}), 401
     
     db = get_db()
+    # ─── SQLite ─────────────────────
     rows = db.execute("""
         SELECT cart.id, cart.quantity, products.id as product_id, products.name, products.price, products.image_url
         FROM cart
@@ -175,6 +251,17 @@ def get_cart():
     """, (session["user_id"],)).fetchall()
 
     return jsonify([dict(r) for r in rows])
+
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     cursor.execute("""
+    #     SELECT cart.id, cart.quantity, products.id as product_id, products.name, products.price, products.image_url
+    #     FROM cart
+    #     JOIN products ON cart.product_id = products.id
+    #     WHERE cart.user_id = %s
+    # """, (session["user_id"],))
+    #     rows = cursor.fetchall()
+    # return jsonify(rows)
 
 @app.route("/api/cart/add", methods=["POST"])
 def cart_add():
@@ -189,6 +276,8 @@ def cart_add():
         return jsonify({"error": "product_id is required"}), 400
     
     db = get_db()
+
+    # ─── SQLite ──────────────────────
     # Hvis produktet allerede er i kurven, øk antallet - obvs
     db.execute("""
         INSERT INTO cart (user_id, product_id, quantity)
@@ -197,6 +286,16 @@ def cart_add():
         DO UPDATE SET quantity = quantity + excluded.quantity
 """, (session["user_id"], product_id, quantity))
     db.commit()
+
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     cursor.execute("""
+    #       INSERT INTO cart (user_id, product_id, quantity)
+    #       VALUES (%s, %s, %s)
+    #       ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)
+    #     """, (session["user_id"], product_id, quantity))
+    # db.commit()
+
     return jsonify({"success": True}), 200
 
 @app.route("/api/cart/update", methods=["POST"])
@@ -212,6 +311,7 @@ def cart_update():
         return jsonify({"error": "Product_id and quantity are required"}), 400
     
     db = get_db()
+    # ─── SQLite ──────────────────────
     if quantity <= 0:
         db.execute("DELETE FROM cart WHERE user_id = ? AND product_id = ?", (session["user_id"], product_id))
     
@@ -219,6 +319,15 @@ def cart_update():
         db.execute("UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?", (quantity, session["user_id"], product_id))
     
     db.commit()
+
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     if quantity <= 0:
+    #         cursor.execute("DELETE FROM cart WHERE user_id = %s AND product_id = %s", (session["user_id"], product_id))
+    #     else:
+    #         cursor.execute("UPDATE cart SET quantity = %s WHERE user_id = %s AND product_id = %s", (quantity, session["user_id"], product_id))
+    # db.commit()
+
     return jsonify({"success": True}), 200
 
 @app.route("/api/cart/remove", methods=["POST"])
@@ -233,9 +342,15 @@ def cart_remove():
         return jsonify({"error": "product_id is required"}), 400
     
     db = get_db()
+    # ─── SQLite ──────────────────────
     db.execute("DELETE FROM cart WHERE user_id = ? AND product_id = ?", (session["user_id"], product_id))
-
     db.commit()
+
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     cursor.execute("DELETE FROM cart WHERE user_id = %s AND product_id = %s", (session["user_id"], product_id))
+    # db.commit()
+
     return jsonify({"success": True}), 200
 
 
@@ -245,8 +360,15 @@ def cart_clear():
         return jsonify({"error": "Not authenticated"}), 401
     
     db = get_db()
+    # ─── SQLite ──────────────────────
     db.execute("DELETE FROM cart WHERE user_id = ?", (session["user_id"],))
     db.commit()
+
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     cursor.execute("DELETE FROM cart WHERE user_id = %s", (session["user_id"],))
+    # db.commit()
+
     return jsonify({"success": True}), 200
 
 @app.route("/api/auth/update-profile", methods=["PUT"])
@@ -267,6 +389,7 @@ def update_profile():
     # Sjekk at epost ikke er i bruk av en annen bruker
 
     conn = get_user_db()
+    # ─── SQLite ──────────────────────
     existing = conn.execute(
         "SELECT id FROM users WHERE email = ? AND id != ?", (email, user_id)
     ).fetchone()
@@ -280,6 +403,21 @@ def update_profile():
     )
     conn.commit()
     conn.close()
+
+    # ─── MariaDB ─────────────────────
+    # with conn.cursor() as cursor:
+    #     cursor.execute(
+    #         "SELECT id FROM users WHERE email = %s AND id != %s", (email, user_id)
+    #     )
+    #     existing = cursor.fetchone()
+    #     if existing:
+    #         return jsonify({"error": "Email already taken"}), 400
+    #     cursor.execute(
+    #         "UPDATE users SET firstname=%s, lastname=%s, email=%s WHERE id=%s",
+    #         (firstname, lastname, email, user_id)
+    #     )
+    # conn.commit()
+    # conn.close()
 
     return jsonify({
         "success": True,
@@ -313,9 +451,16 @@ def change_password():
     # hash new password and update
     new_hash = hashed_password(new_password)
     conn = get_user_db()
+    # ─── SQLite ──────────────────────
     conn.execute("UPDATE users SET password = ? WHERE id = ?", (new_hash, user["id"]))
     conn.commit()
     conn.close()
+
+    # ─── MariaDB ─────────────────────
+    # with conn.cursor() as cursor:
+    #     cursor.execute("UPDATE users SET password = %s WHERE id = %s", (new_hash, user["id"]))
+    # conn.commit()
+    # conn.close()
 
     return jsonify({"success": True, "message": "Password updated"}), 200
 
@@ -358,25 +503,48 @@ def settings_page():
 @app.route("/api/products")
 def get_products():
     db = get_db()
+    # ─── SQLite ──────────────────────
     rows = db.execute("SELECT * FROM products").fetchall()
     return jsonify([dict(r) for r in rows])
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     cursor.execute("SELECT * FROM products")
+    #     rows = cursor.fetchall()
+    # return jsonify(rows)
 
 @app.route("/api/products/<int:product_id>")
 def get_product(product_id):
     db = get_db()
+
+    # ─── SQLite ──────────────────────
     row = db.execute(
         "SELECT * FROM products WHERE id = ?",
         (product_id,)
     ).fetchone()
     if row:
         return jsonify(dict(row))
+    
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     cursor.execute("SELECT * FROM products WHERE id = %s", (product_id,))
+    #     row = cursor.fetchone()
+    # if row:
+    #     return jsonify(row)
     return jsonify({"error": "Not found"}), 404
 
 @app.route("/api/products/<int:product_id>", methods=["DELETE"])
 def delete_product(product_id):
     db = get_db()
+
+    # ─── SQLite ──────────────────────
     db.execute("DELETE FROM products WHERE id = ?", (product_id,))
     db.commit()
+
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #     cursor.execute("DELETE FROM products WHERE id = %s", (product_id,))
+    # db.commit()
+    
     return jsonify({"success": True}), 200
 
 @app.route("/api/products", methods=["POST"])
@@ -421,11 +589,21 @@ def add_product():
 
     try:
         db = get_db()
+        # ─── SQLite ──────────────────────
         db.execute(
             "INSERT INTO products (name, price, image_url, description) VALUES (?,?,?,?)",
             (name, float(price), image_url, description)
         )
         db.commit()
+
+        # ─── MariaDB ─────────────────────
+        # with db.cursor() as cursor:
+        #     cursor.execute(
+        #         "INSERT INTO products (name, price, image_url, description) VALUES (%s, %s, %s, %s)",
+        #         (name, float(price), image_url, description)
+        #     )
+        # db.commit()
+
         return jsonify({"success": True }), 201
     except Exception as e:
         return jsonify({"error": f"Database error: {str(e)}"}), 500
