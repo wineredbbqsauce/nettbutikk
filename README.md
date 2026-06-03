@@ -60,10 +60,10 @@ Be normal.
 | Product System         | ✅     |
 | SQLite Support         | ✅     |
 | Auto Database Creation | ✅     |
-| Admin Panel            | 🚧     |
+| Admin Panel            | ✅     |
 | Checkout System        | 🚧     |
 | OAuth Login            | 🚧     |
-| Settings tab           | 🚧     |
+| Settings tab           | ✅     |
 
 The placeholder/demo products are only there so the store has content out of the box.
 
