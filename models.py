@@ -19,7 +19,7 @@ DB_PATH = "users.db"
 #     "database": "nettbutikk",
 #     "charset": "utf8mb4",
 #     "cursorclass": pymysql.cursors.DictCursor
-# }git commit -m "Added commented out mariaDB versions - UNCOMMENT TO SWITCH TO MariaDB"
+# }
 
 
 def get_user_db():

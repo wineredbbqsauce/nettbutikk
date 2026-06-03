@@ -2,4 +2,4 @@ flask
 flask-cors
 bcrypt
 # ─── MariaDB (uncomment on exam) ──────────────────────
-# PyMySQL
+PyMySQL
