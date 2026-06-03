@@ -46,6 +46,13 @@ def init_user_db():
                 password TEXT NOT NULL
             )
         """)
+
+        if conn.execute("SELECT COUNT(*) FROM users WHERE email = ?", ("admin@section.com",)).fetchone()[0] == 0:
+            conn.execute(
+                "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)",
+                ("Admin", "User", "admin@section.com", hashed_password("admin123"))
+            )
+
         conn.commit()
     
     # ─── MariaDB ─────────────────────

@@ -81,6 +81,8 @@
             <option value="name">Name</option>
           </select>
         </div>
+
+        {% if is_admin %}
         <div class="toolbnar-actions">
           <button class="add-btn" onclick="openAddModal()">
             + Add Products
@@ -93,6 +95,7 @@
             🗑 Remove
           </button>
         </div>
+        {% endif %}
       </div>
       <div class="products" id="product-grid"></div>
 
