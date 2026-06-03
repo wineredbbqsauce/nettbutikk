@@ -110,7 +110,7 @@ def init_db():
             "INSERT INTO admins (email) VALUES (?)", ("admin@section.com",))
         conn.commit()
     # ─── MariaDB ─────────────────────
-    # conn = mysql.connect(**DB_CONFIG)
+    # conn = pymysql.connect(**DB_CONFIG)
     # with conn.cursor() as cursor:
     #     cursor.execute("""
     #         CREATE TABLE IF NOT EXISTS products (
@@ -124,8 +124,7 @@ def init_db():
     #
     #     cursor.execute("""
     #         CREATE TABLE IF NOT EXISTS admins (
-    #             email VARCHAR(255) PRIMARY KEY,
-    #             password VARCHAR(255) NOT NULL
+    #             email VARCHAR(255) PRIMARY KEY
     #         )
     #     """)
     #
@@ -145,6 +144,9 @@ def init_db():
     #             "INSERT INTO products (name, price, image_url, description) VALUES (%(name)s, %(price)s, %(image_url)s, %(description)s)",
     #             SEED_PRODUCTS
     #         )
+    #      if conn.execute("SELECT COUNT (*) FROM admins").fetchone()[0] == 0:
+    #        conn.execute(
+    #       "INSERT INTO admins (email) VALUES (?)", ("admin@section.com",))
     #     conn.commit()
     #     conn.close()
 
@@ -494,12 +496,23 @@ def index():
 
 @app.route("/products")
 def products():
+    # ─── SQLite ──────────────────────
     is_admin = False
     if "user_id" in session:
         db = get_db()
         row = db.execute("SELECT email FROM admins WHERE email = ?", (session["email"],)).fetchone()
         if row:
             is_admin = True
+    
+    # ─── MariaDB ─────────────────────
+    # is_admin = False
+    # if "user_id" in session:
+    #     db = get_db()
+    #     with db.cursor() as cursor:
+    #         cursor.execute("SELECT email FROM admins WHERE email = %s", (session["email"],))
+    #         row = cursor.fetchone()
+    #         if row:
+    #             is_admin = True
     return render_template("products.html", is_admin=is_admin)
 
 @app.route("/login")
@@ -558,21 +571,24 @@ def get_product(product_id):
 
 @app.route("/api/products/<int:product_id>", methods=["DELETE"])
 def delete_product(product_id):
-
     if "user_id" not in session:
         return jsonify({"error": "Not authenticated"}), 401
     db = get_db()
+    # ─── SQLite ──────────────────────
     row = db.execute("SELECT email FROM admins WHERE email = ?", (session["email"],)).fetchone()
     if not row:
         return jsonify({"error": "Admin access required"}), 403
-
-    # ─── SQLite ──────────────────────
+    
     db.execute("DELETE FROM products WHERE id = ?", (product_id,))
     db.commit()
 
     # ─── MariaDB ─────────────────────
     # with db.cursor() as cursor:
-    #     cursor.execute("DELETE FROM products WHERE id = %s", (product_id,))
+    #   cursor.execute("SELECT email FROM admins WHERE email = %s", (session["email"],))
+    #   admin = cursor.fetchone()
+    #   if not admin:
+    #     return jsonify({"error": "Admin access required"}), 403
+    #   cursor.execute("DELETE FROM products WHERE id = %s", (product_id,))
     # db.commit()
     
     return jsonify({"success": True}), 200
@@ -585,6 +601,13 @@ def add_product():
     row = db.execute("SELECT email FROM admins WHERE email = ?", (session["email"],)).fetchone()
     if not row:
         return jsonify({"error": "Admin access required"}), 403
+    
+    # ─── MariaDB ─────────────────────
+    # with db.cursor() as cursor:
+    #   cursor.execute("SELECT email FROM admins WHERE email = %s", (session["email"],))
+    #   admin = cursor.fetchone()
+    #   if not admin:
+    #     return jsonify({"error": "Admin access required"}), 403
     
     name = request.form.get("name", "").strip()
     price = request.form.get("price")

@@ -67,6 +67,12 @@ def init_user_db():
     #             password VARCHAR(60) NOT NULL
     #         )
     #     """)
+    #
+    #     cursor.execute("SELECT COUNT(*) FROM users WHERE email = %s", ("admin@section.com",)).fetchone()[0] == 0:
+    #       cursor.execute(
+    #           "INSERT INTO users (firstname, lastname, email, password) VALUES (%s, %s, %s, %s)",
+    #           ("Admin", "User", "admin@section.com", hashed_password("admin123"))
+    #       )
     # conn.commit()
     # conn.close()
 
