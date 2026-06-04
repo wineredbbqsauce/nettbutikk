@@ -1,5 +1,13 @@
 const API_URL = "/api/auth";
 
+// === SHA-256 ====
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 // ====== HELPERS ======
 
 function showMessage(message, type) {
@@ -65,10 +73,17 @@ async function handleRegister(e) {
   }
 
   try {
+    const hashedPassword = await sha256(password);
+
     const res = await fetch(`${API_URL}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firstName, lastName, email, password }),
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+      }),
     });
 
     const data = await res.json();
@@ -78,32 +93,15 @@ async function handleRegister(e) {
       return;
     }
 
-    const loginRes = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (loginRes.ok) {
-      const meRes = await fetch("/api/auth/me");
-      const meData = await meRes.json();
-      localStorage.setItem("user", JSON.stringify(meData.user || meData));
-
-      showMessage("Account created! Redirecting...", "success");
-      setTimeout(() => (window.location.href = "/"), 1500);
-    } else {
-      showMessage(
-        "Registration succeeded but login failed. Please try logging in.",
-        "error",
-      );
-      setTimeout(() => (window.location.href = "/login"), 1500);
-    }
+    // Server now logs us in instantly and returns the user object
+    localStorage.setItem("user", JSON.stringify(data.user));
+    showMessage("Account created! Redirecting...", "success");
+    setTimeout(() => (window.location.href = "/"), 1500);
   } catch (err) {
     showMessage("Something went wrong. Try again.", "error");
     console.error(err);
   }
 }
-
 // ====== LOGIN ======
 
 async function handleLogin(e) {
@@ -118,10 +116,12 @@ async function handleLogin(e) {
   }
 
   try {
+    const hashedPassword = await sha256(password);
+
     const res = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password: hashedPassword }),
     });
 
     const data = await res.json();
@@ -304,10 +304,15 @@ async function updatePassword() {
   }
 
   try {
+    const currentHash = await sha256(currentPw);
+    const newHash = await sha256(newPw);
     const res = await fetch(`${API_URL}/change-password`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ currentPassword: currentPw, newPassword: newPw }),
+      body: JSON.stringify({
+        currentPassword: currentHash,
+        newPassword: newHash,
+      }),
     });
 
     const data = await res.json();

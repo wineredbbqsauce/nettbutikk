@@ -64,6 +64,17 @@ const Cart = {
     }
   },
 
+  async checkout() {
+    const res = await fetch("/api/checkout", { method: "POST" });
+    const data = await res.json();
+    if (data.success) {
+      Cart.closeDrawer();
+      window.location.href = "/checkout?order=" + data.order_number;
+    } else {
+      alert(data.error || "Checkout Failed");
+    }
+  },
+
   changeQty(productId, newQty) {
     if (newQty <= 0) Cart.remove(productId);
     else Cart.update(productId, newQty);
@@ -208,7 +219,7 @@ function injectCartDrawer() {
     "</div>" +
     '<div class="cart-drawer-footer">' +
     '<div class="cart-total">Total: <strong id="cart-drawer-total">$0.00</strong></div>' +
-    '<button class="cart-checkout-btn" onclick="alert(\'Checkout coming soon!\')">Checkout</button>' +
+    '<button class="cart-checkout-btn" onclick="Cart.checkout()">Checkout</button>' +
     '<button class="cart-clear-btn" onclick="Cart.clear()">Clear Cart</button>' +
     "</div>";
   document.body.appendChild(drawer);

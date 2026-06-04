@@ -1086,10 +1086,10 @@
       </div>
       <nav>
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Products</a></li>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Products</a></li>
+          <li><a href="/about-us">About Us</a></li>
+          <li><a href="/contact">Contact Us</a></li>
         </ul>
       </nav>
       <button class="hamburger" aria-label="Menu">
@@ -1105,7 +1105,7 @@
           <span class="cart-count">3</span>
         </div>
         <div class="login-btn">
-          <a href="#"><i class="fa-solid fa-user"></i></a>
+          <a href="/settings"><i class="fa-solid fa-user"></i></a>
         </div>
       </div>
     </header>
@@ -1165,17 +1165,22 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="fname">First Name</label>
-              <input type="text" id="fname" placeholder="John" />
+              <input type="text" id="fname" placeholder="John" required />
             </div>
             <div class="form-group">
               <label for="lname">Last Name</label>
-              <input type="text" id="lname" placeholder="Doe" />
+              <input type="text" id="lname" placeholder="Doe" required />
             </div>
             <div class="form-group full">
               <label for="email">Email Address</label>
               <div class="icon-wrap">
                 <i class="fas fa-envelope"></i>
-                <input type="email" id="email" placeholder="john@example.com" />
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="john@example.com"
+                  required
+                />
               </div>
             </div>
             <div class="form-group full">
@@ -1308,6 +1313,7 @@
                   id="cc-name"
                   placeholder="John Doe"
                   oninput="previewCard()"
+                  required
                 />
               </div>
               <div class="form-group full">
@@ -1323,6 +1329,7 @@
                       fmtCardNum(this);
                       previewCard();
                     "
+                    required
                   />
                 </div>
               </div>
@@ -1337,6 +1344,7 @@
                     fmtExpiry(this);
                     previewCard();
                   "
+                  required
                 />
               </div>
               <div class="form-group">
@@ -1352,6 +1360,7 @@
                   id="cc-cvv"
                   placeholder="•••"
                   maxlength="4"
+                  required
                 />
               </div>
             </div>
@@ -1495,8 +1504,10 @@
             Order #<strong id="order-num">SEC-00000000</strong>
           </div>
           <div class="success-actions">
-            <a href="#" class="btn-primary">Back to Home</a>
-            <a href="#" class="btn-secondary">View Orders</a>
+            <a href="/" class="btn-primary">Back to Home</a>
+            <a href="/settings#section-orders" class="btn-secondary"
+              >View Orders</a
+            >
           </div>
         </section>
       </div>
@@ -1507,39 +1518,16 @@
           <div class="summary-title">Order Summary</div>
 
           <div class="sum-items">
-            <div class="sum-item">
-              <div class="sum-img-wrap">
-                <div class="sum-img"></div>
-                <span class="sum-qty">2</span>
-              </div>
-              <div class="sum-info">
-                <span class="sum-name">Premium Widget</span>
-                <span class="sum-variant">Black / Medium</span>
-              </div>
-              <span class="sum-price">$49.98</span>
-            </div>
-            <div class="sum-item">
-              <div class="sum-img-wrap">
-                <div class="sum-img"></div>
-                <span class="sum-qty">1</span>
-              </div>
-              <div class="sum-info">
-                <span class="sum-name">Classic Tote Bag</span>
-                <span class="sum-variant">Natural</span>
-              </div>
-              <span class="sum-price">$24.99</span>
-            </div>
-            <div class="sum-item">
-              <div class="sum-img-wrap">
-                <div class="sum-img"></div>
-                <span class="sum-qty">1</span>
-              </div>
-              <div class="sum-info">
-                <span class="sum-name">Ceramic Mug Set</span>
-                <span class="sum-variant">White / Set of 2</span>
-              </div>
-              <span class="sum-price">$18.99</span>
-            </div>
+            <p
+              style="
+                color: var(--muted);
+                font-size: 0.8rem;
+                text-align: center;
+                padding: 0.5rem 0;
+              "
+            >
+              Loading cart...
+            </p>
           </div>
 
           <div class="sum-divider"></div>
@@ -1547,7 +1535,7 @@
           <div class="sum-lines">
             <div class="sum-line">
               <span>Subtotal</span>
-              <span id="s-subtotal">$93.96</span>
+              <span id="s-subtotal">$0.00</span>
             </div>
             <div class="sum-line" id="s-disc-row" style="display: none">
               <span style="color: var(--success)"
@@ -1565,7 +1553,7 @@
             </div>
             <div class="sum-line">
               <span>Tax (25% MVA)</span>
-              <span id="s-tax">$23.49</span>
+              <span id="s-tax">$0.00</span>
             </div>
           </div>
 
@@ -1573,7 +1561,7 @@
 
           <div class="sum-total">
             <span>Total</span>
-            <span id="s-total">$117.45</span>
+            <span id="s-total">$0.00</span>
           </div>
 
           <div class="trust-badges">
@@ -1612,6 +1600,45 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
+      async function loadCartSummary() {
+        const res = await fetch("/api/cart", { credentials: "same-origin" });
+        if (!res.ok) {
+          container.innerHTML = `<p style="color:var(--muted); font-size:0.8rem; text-align:center; padding:0.5rem 0">Could not load cart.</p>`;
+          return;
+        }
+        const items = await res.json();
+        if (items.length === 0) {
+          container.innerHTML = `<p style="color:var(--muted); font-size:0.8rem; text-align:center; padding:0.5rem 0">Your cart is empty.</p>`;
+          return;
+        }
+
+        const container = document.querySelector(".sum-items");
+        container.innerHTML = items
+          .map(
+            (item) => `
+            <div class="sum-item">
+              <div class="sum-img-wrap">
+                <img class="sum-img" src="${item.image_url || ""}" alt="${item.name}"
+                onerror="this.style.background='#eee'" />
+                <span class="sum-qty">${item.quantity}</span>
+              </div>
+            <div class="sum-info">
+              <span class="sum-name">${item.name}</span>
+            </div>
+            <span class="sum-price">$${(item.price * item.quantity).toFixed(2)}</span>
+            </div>
+            `,
+          )
+          .join("");
+
+        const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
+        document.getElementById("s-subtotal").textContent =
+          "$" + subtotal.toFixed(2);
+        // trigger recalc with real sub total
+        window._subtotal = subtotal;
+        recalc();
+      }
+
       function updateProgress(step) {
         const active = siMap[step];
         [1, 2, 3, 4].forEach((n) => {
@@ -1647,7 +1674,7 @@
 
       // ── RECALCULATE TOTALS ──
       function recalc() {
-        const subtotal = 93.96;
+        const subtotal = window._subtotal || 0;
         const discRow = document.getElementById("s-disc-row");
         const discEl = document.getElementById("s-discount");
         const disc =
@@ -1757,7 +1784,8 @@
         const msg = document.getElementById("promo-msg");
         if (PROMOS[code]) {
           const pct = PROMOS[code];
-          const disc = (93.96 * pct) / 100;
+          const subtotal = window._subtotal || 0;
+          const disc = (subtotal * pct) / 100;
           document.getElementById("s-discount").textContent =
             "-$" + disc.toFixed(2);
           document.getElementById("s-disc-row").style.display = "flex";
@@ -1772,20 +1800,46 @@
       }
 
       // ── PLACE ORDER ──
-      function placeOrder() {
+      // function placeOrder() {
+      //   const btn = document.querySelector(".btn-green");
+      //   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order…';
+      //   btn.disabled = true;
+      //   setTimeout(() => {
+      //     document.getElementById("order-num").textContent =
+      //       "SEC-" + Date.now().toString().slice(-8);
+      //     goTo("success");
+      //   }, 1400);
+      // }
+
+      async function placeOrder() {
         const btn = document.querySelector(".btn-green");
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order…';
+        btn.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
         btn.disabled = true;
-        setTimeout(() => {
-          document.getElementById("order-num").textContent =
-            "SEC-" + Date.now().toString().slice(-8);
-          goTo("success");
-        }, 1400);
+
+        try {
+          const res = await fetch("/api/checkout", { method: "POST" });
+          const data = await res.json();
+
+          if (data.success) {
+            document.getElementById("order-num").textContent =
+              data.order_number;
+            goTo("success");
+          } else {
+            btn.innerHTML = '<i class="fas fa-lock"></i> Place Order';
+            btn.disabled = false;
+            alert(data.error || "Checkout failed. Please try again.");
+          }
+        } catch (err) {
+          btn.innerHTML = '<i class="fas fa-lock"></i> Place Order';
+          btn.disabled = false;
+          alert("Network Error. Please try again.");
+        }
       }
 
       // ── INIT ──
       goTo("shipping");
-      recalc();
+      loadCartSummary();
     </script>
   </body>
 </html>

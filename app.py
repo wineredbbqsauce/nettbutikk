@@ -97,11 +97,36 @@ def init_db():
                 UNIQUE(user_id, product_id)    
                 )                         
             """)
+        
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS orders (
+            id           INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id      INTEGER NOT NULL,
+            order_id     TEXT UNIQUE NOT NULL,
+            status       TEXT NOT NULL DEFAULT 'pending',
+            total_amount REAL NOT NULL,
+            created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS order_items (
+            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id          INTEGER NOT NULL,
+            product_id        INTEGER NOT NULL,
+            quantity          INTEGER NOT NULL,
+            price_at_purchase REAL NOT NULL,
+            FOREIGN KEY (order_id)   REFERENCES orders(id)   ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+                )
+            """)
+
         if conn.execute(
             "SELECT COUNT(*) FROM products"
         ).fetchone()[0] == 0:
             conn.executemany(
-                "INSERT INTO products (name, price, image_url, description) VALUES ( :name, :price, :image_url, :description)",
+                "INSERT INTO products (name, price, image_url, description) VALUES (?, ?, ?, ?)",
                 SEED_PRODUCTS
             )
 
@@ -158,7 +183,6 @@ def init_db():
 
 @app.route("/api/auth/register", methods=["POST"])
 def register():
-    """ R u stupid? This is obvs for creating new users, like u know, registering.. """
     data = request.get_json()
     firstname = data.get("firstName", "").strip()
     lastname = data.get("lastName", "").strip()
@@ -168,11 +192,21 @@ def register():
     if not firstname or not lastname or not email or not password:
         return jsonify({"error": "Firstname, Lastname, Email and Password are required"}), 400
     
-    if len(password) < 6:
-        return jsonify({"error": "Password must be at least 6 characters long"}), 400
-    
     if create_user(firstname, lastname, email, password):
-        return jsonify({"success": True, "message": "User created successfully"}), 201
+        # Immediately log the user in by setting the session
+        user = get_user_by_email(email)
+        session["user_id"] = user["id"]
+        session["email"] = user["email"]
+        return jsonify({
+            "success": True,
+            "message": "User created successfully",
+            "user": {
+                "id": user["id"],
+                "firstname": user["firstname"],
+                "lastname": user["lastname"],
+                "email": user["email"]
+            }
+        }), 201
     else:
         return jsonify({"error": "Email already exists"}), 400
 
@@ -251,6 +285,88 @@ def delete_account():
     
     session.clear()
     return jsonify({"success": True, "message": "Account deleted successfully"}), 200
+
+@app.route("/api/checkout", methods=["POST"])
+@login_required
+def checkout():
+    user_id = session["user_id"]
+    db = get_db()
+
+    cart_items = db.execute("""
+        SELECT cart.product_id, cart.quantity, products.price
+        FROM cart
+        JOIN products ON cart.product_id = products.id
+        WHERE cart.user_id = ?
+    """, (user_id,)).fetchall()
+
+    if not cart_items:
+        return jsonify({"error": "Cart is empty"}), 400
+
+    total = sum(item["quantity"] * item["price"] for item in cart_items)
+
+    order_number = f"ORD-{uuid.uuid4().hex[:8].upper()}"
+    db.execute("""
+        INSERT INTO orders (user_id, order_id, total_amount, status)
+        VALUES (?, ?, ?, 'completed')
+    """, (user_id, order_number, total))
+
+    order_id = db.execute("SELECT last_insert_rowid()").fetchone()[0]
+
+    for item in cart_items:
+        db.execute("""
+            INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase)
+            VALUES (?, ?, ?, ?)
+        """, (order_id, item["product_id"], item["quantity"], item["price"]))
+
+    db.execute("DELETE FROM cart WHERE user_id = ?", (user_id,))
+    db.commit()
+
+    return jsonify({
+        "success": True,
+        "order_id": order_id,
+        "order_number": order_number,
+        "total_amount": total
+    }), 200
+
+@app.route("/api/user/transaction")
+@login_required
+def get_user_transaction():
+    user_id = session["user_id"]
+    db = get_db()
+
+    transactions = db.execute("""
+        SELECT order_id, total_amount, created_at, status
+        FROM orders WHERE user_id = ? ORDER BY created_at DESC
+    """, (user_id,)).fetchall()
+
+    total_spent = db.execute("""
+        SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE user_id = ?
+    """, (user_id,)).fetchone()["total"]
+
+    return jsonify({
+        "transactions": [dict(row) for row in transactions],
+        "total_spent": total_spent
+    })
+
+@app.route("/api/user/orders")
+@login_required
+def get_user_orders():
+    user_id = session["user_id"]
+    db = get_db()
+
+    orders = db.execute("""
+        SELECT o.order_id, o.total_amount, o.created_at, o.status,
+               GROUP_CONCAT(p.name || ' (x' || oi.quantity || ')') as items
+        FROM orders o
+        JOIN order_items oi ON o.id = oi.order_id
+        JOIN products p ON oi.product_id = p.id
+        WHERE o.user_id = ?
+        GROUP BY o.id
+        ORDER BY o.created_at DESC
+    """, (user_id,)).fetchall()
+
+    return jsonify([dict(row) for row in orders])
+
 
 # ============
 #    CART
@@ -458,8 +574,8 @@ def change_password():
 
     if not current_password or not new_password:
         return jsonify({"error": "Current and new password required"}), 400
-    if len(new_password) < 6:
-        return jsonify({"error": "New password must be at least 6 characters"}), 400
+    # if len(new_password) < 6:
+    #     return jsonify({"error": "New password must be at least 6 characters"}), 400
 
     # verify current password
     user = get_user_by_id(session["user_id"])
@@ -536,6 +652,12 @@ def settings_page():
     if "user_id" not in session:
         return redirect("/login")
     return render_template("settings.html")
+
+@app.route("/checkout")
+def checkout_page():
+    if "user_id" not in session:
+        return redirect("/login")
+    return render_template("checkout.html")
     
 @app.route("/api/products")
 def get_products():
